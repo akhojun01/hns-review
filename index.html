@@ -39,6 +39,15 @@
       box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -6px rgba(15, 23, 42, 0.04);
       border-color: #cbd5e1;
     }
+    #ratingFilters .rating-filter-button[aria-pressed="true"] {
+      background: #0f172a;
+      border-color: #0f172a;
+      color: white;
+    }
+    #ratingFilters .rating-filter-button[aria-pressed="mixed"] {
+      background: #f1f5f9;
+      border-color: #64748b;
+    }
     .no-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -226,19 +235,8 @@
             </button>
           </div>
 
-          <!-- 우측 별점 + 검색 -->
+          <!-- 우측 대응 상태 + 검색 -->
           <div class="flex flex-wrap items-center gap-2">
-            <select id="ratingFilter" onchange="onFilterChange()"
-              class="px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg font-medium text-slate-700 focus:outline-none focus:border-slate-400">
-              <option value="ALL">전체 별점</option>
-              <option value="5">★★★★★ (5점)</option>
-              <option value="4">★★★★☆ (4점)</option>
-              <option value="3">★★★☆☆ (3점)</option>
-              <option value="2">★★☆☆☆ (2점)</option>
-              <option value="1">★☆☆☆☆ (1점)</option>
-              <option value="LOW">부정 리뷰 (1~2점)</option>
-            </select>
-
             <select id="statusFilter" onchange="onFilterChange()"
               class="px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg font-medium text-slate-700 focus:outline-none focus:border-slate-400">
               <option value="ALL">대응 상태 전체</option>
@@ -255,12 +253,23 @@
           </div>
         </div>
 
-        <!-- 2행: 기간 선택 프리셋 & 직접 날짜 지정 -->
+        <div id="ratingFilters" role="group" aria-label="별점" class="flex flex-wrap items-center gap-1.5">
+          <span class="mr-1 text-xs font-semibold text-slate-500" aria-hidden="true">별점</span>
+          <button type="button" data-rating="ALL" aria-pressed="true" onclick="toggleRatingFilter(this.dataset.rating)" class="rating-filter-button whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">전체</button>
+          <button type="button" data-rating="5" aria-pressed="false" onclick="toggleRatingFilter(this.dataset.rating)" class="rating-filter-button whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">5개</button>
+          <button type="button" data-rating="4" aria-pressed="false" onclick="toggleRatingFilter(this.dataset.rating)" class="rating-filter-button whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">4개</button>
+          <button type="button" data-rating="3" aria-pressed="false" onclick="toggleRatingFilter(this.dataset.rating)" class="rating-filter-button whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">3개</button>
+          <button type="button" data-rating="2" aria-pressed="false" onclick="toggleRatingFilter(this.dataset.rating)" class="rating-filter-button whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">2개</button>
+          <button type="button" data-rating="1" aria-pressed="false" onclick="toggleRatingFilter(this.dataset.rating)" class="rating-filter-button whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">1개</button>
+          <button type="button" data-rating="LOW" aria-pressed="false" onclick="toggleRatingFilter(this.dataset.rating)" class="rating-filter-button whitespace-nowrap rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">부정리뷰 (1~2개)</button>
+        </div>
+
+        <!-- 기간 선택 프리셋 & 직접 날짜 지정 -->
         <div class="pt-3 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-xs font-semibold text-slate-500 mr-1"><i class="fa-regular fa-calendar mr-1"></i>조회 기간:</span>
-            <button onclick="applyDatePreset('PREVIOUS_MONTH')" data-preset="PREVIOUS_MONTH" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white">전월</button>
-          <button onclick="applyDatePreset('ALL')" data-preset="ALL" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">전체기간</button>
+            <button onclick="applyDatePreset('PREVIOUS_MONTH')" data-preset="PREVIOUS_MONTH" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">전월</button>
+          <button onclick="applyDatePreset('ALL')" data-preset="ALL" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white">전체기간</button>
             <button onclick="applyDatePreset('7D')" data-preset="7D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 7일</button>
             <button onclick="applyDatePreset('30D')" data-preset="30D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 30일</button>
             <button onclick="applyDatePreset('90D')" data-preset="90D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 3개월</button>
@@ -349,8 +358,8 @@
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">기본 조회 기간 설정</label>
           <select id="settingDefaultPeriod" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-sm">
-            <option value="PREVIOUS_MONTH" selected>전월 1일~말일</option>
-            <option value="ALL">전체 기간</option>
+            <option value="PREVIOUS_MONTH">전월 1일~말일</option>
+            <option value="ALL" selected>전체 기간</option>
             <option value="7D">최근 7일</option>
             <option value="30D">최근 30일</option>
             <option value="90D">최근 3개월</option>
@@ -399,16 +408,16 @@
       currentAppId: 1,
       currentPage: 1,
       osFilter: 'ALL',     // 'ALL' | 'Android' | 'iOS'
-      ratingFilter: 'ALL',
+      ratingFilters: new Set(),
       statusFilter: 'ALL',
       searchQuery: '',
       startDate: '',
       endDate: '',
-      datePreset: 'PREVIOUS_MONTH',
+      datePreset: 'ALL',
       sortOrder: 'NEWEST',
       settings: {
         pageSize: 10,
-        defaultPeriod: 'PREVIOUS_MONTH',
+        defaultPeriod: 'ALL',
         showDevReply: true,
         highlightKeyword: true
       }
@@ -641,13 +650,8 @@
       }
 
       // 별점 필터
-      if (state.ratingFilter !== 'ALL') {
-        if (state.ratingFilter === 'LOW') {
-          list = list.filter(r => r.rating <= 2);
-        } else {
-          const targetRating = parseInt(state.ratingFilter, 10);
-          list = list.filter(r => r.rating === targetRating);
-        }
+      if (state.ratingFilters.size) {
+        list = list.filter(review => state.ratingFilters.has(review.rating));
       }
 
       // 대응 상태 필터
@@ -686,6 +690,7 @@
     }
 
     function renderDetailView() {
+      updateRatingButtons();
       const app = appsData.find(a => a.id === state.currentAppId) || appsData[0];
 
       // 상단 빠른 앱 전환 탭 렌더링
@@ -884,8 +889,41 @@
       renderDetailView();
     }
 
+    function toggleRatingFilter(filter) {
+      const selected = state.ratingFilters;
+      if (filter === 'ALL') {
+        selected.clear();
+      } else if (filter === 'LOW') {
+        if (selected.has(1) && selected.has(2)) {
+          selected.delete(1);
+          selected.delete(2);
+        } else {
+          selected.add(1);
+          selected.add(2);
+        }
+      } else {
+        const rating = Number(filter);
+        if (selected.has(rating)) selected.delete(rating);
+        else selected.add(rating);
+      }
+      state.currentPage = 1;
+      renderDetailView();
+    }
+
+    function updateRatingButtons() {
+      const selected = state.ratingFilters;
+      document.querySelectorAll('#ratingFilters button').forEach(button => {
+        const filter = button.dataset.rating;
+        let pressed = filter === 'ALL' ? !selected.size : selected.has(Number(filter));
+        if (filter === 'LOW') {
+          const lowCount = Number(selected.has(1)) + Number(selected.has(2));
+          pressed = lowCount === 1 ? 'mixed' : lowCount === 2;
+        }
+        button.setAttribute('aria-pressed', String(pressed));
+      });
+    }
+
     function onFilterChange() {
-      state.ratingFilter = document.getElementById('ratingFilter').value;
       state.statusFilter = document.getElementById('statusFilter').value;
       state.searchQuery = document.getElementById('reviewSearchInput').value;
       state.sortOrder = document.getElementById('sortOrderSelect').value;
@@ -954,12 +992,11 @@
 
     function resetAllFilters() {
       state.osFilter = 'ALL';
-      state.ratingFilter = 'ALL';
+      state.ratingFilters.clear();
       state.statusFilter = 'ALL';
       state.searchQuery = '';
       state.sortOrder = 'NEWEST';
 
-      document.getElementById('ratingFilter').value = 'ALL';
       document.getElementById('statusFilter').value = 'ALL';
       document.getElementById('reviewSearchInput').value = '';
       document.getElementById('sortOrderSelect').value = 'NEWEST';
