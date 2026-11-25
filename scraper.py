@@ -12,7 +12,7 @@ from google_play_scraper import Sort, app as play_app, reviews
 
 
 KST = timezone(timedelta(hours=9))
-START_DATE = '2026-01-01'
+START_DATE = '2025-01-01'
 APPS_FILE = Path('apps.json')
 OUTPUT_FILE = Path('reviews_data.json')
 
@@ -224,7 +224,9 @@ def main():
 
     old = json.loads(OUTPUT_FILE.read_text(encoding='utf-8')) if OUTPUT_FILE.exists() else {}
     old_apps = {app['id']: app for app in old.get('apps', [])}
-    old_sources = {(src['appId'], src['os']): src for src in old.get('sources', [])}
+    old_sources = {
+        (src['appId'], src['os']): src for src in old.get('sources', [])
+    } if old.get('startDate') == START_DATE else {}
     old_reviews = defaultdict(dict)
     for row in old.get('reviews', []):
         if row['date'] >= START_DATE:
