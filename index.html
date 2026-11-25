@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home | REVIEW-SCRAPER</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- SheetJS for Real Excel (.xlsx) Export -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans KR', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f8fafc;
+      color: #1e293b;
+    }
+    .app-card {
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+    .app-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -6px rgba(15, 23, 42, 0.04);
+      border-color: #cbd5e1;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans antialiased selection:bg-slate-900 selection:text-white">
+
+  <!-- ===================================================================== -->
+  <!-- 상단 심플 네비게이션 바 (review.stlee.kr 스타일) -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-30 bg-white border-b border-slate-200/90">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3">
+      <!-- 좌측 브랜드 타이틀 -->
+      <div class="flex items-center gap-3 min-w-0">
+        <a href="#/" onclick="goHome(event)" class="flex items-center gap-2.5 group">
+          <span class="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-extrabold text-xs tracking-tighter group-hover:bg-indigo-600 transition-colors">
+            RS
+          </span>
+          <span class="font-extrabold text-base sm:text-lg tracking-tight text-slate-900">
+            REVIEW-SCRAPER
+          </span>
+        </a>
+        <span class="hidden md:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-500 border border-slate-200">
+          홈쇼핑 앱 리뷰 모니터
+        </span>
+      </div>
+
+      <!-- 우측 액션 메뉴 -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- 설정 버튼 -->
+        <button onclick="openSettingsModal()" title="보기 및 기간 설정"
+          class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 bg-white transition">
+          <i class="fa-solid fa-sliders text-slate-500"></i>
+          <span class="hidden sm:inline">설정</span>
+        </button>
+
+        <!-- 관리자 전용: 사이트 추가 버튼 (로그인 시 표시) -->
+        <button id="btnAddSiteHeader" onclick="openAddSiteModal()"
+          class="hidden inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition">
+          <i class="fa-solid fa-plus"></i>
+          <span>사이트 추가</span>
+        </button>
+
+        <!-- 관리자 로그인 / 상태 버튼 -->
+        <button id="btnAdminAuth" onclick="handleAdminButtonClick()"
+          class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 bg-white transition">
+          <i class="fa-solid fa-lock text-slate-400"></i>
+          <span id="adminBtnLabel">관리자</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- 메인 컨테이너 -->
+  <!-- ===================================================================== -->
+  <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- =================================================================== -->
+    <!-- VIEW 1: 홈 화면 (#/) - 앱 카드 그리드 -->
+    <!-- =================================================================== -->
+    <section id="homeView" class="space-y-6">
+      <!-- 상단 요약 및 검색 바 -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 sm:p-5 rounded-xl border border-slate-200/90 shadow-sm">
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+            모니터링 대상 모바일 앱
+            <span id="totalAppCountBadge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">7개</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 mt-1">
+            각 홈쇼핑사 카드를 선택하면 Android(Google Play) 및 iOS(App Store) 최신 리뷰를 상세 조회할 수 있습니다.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <div class="relative flex-1 sm:w-64">
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+            <input id="homeAppSearch" type="text" oninput="renderHomeGrid()" placeholder="앱 이름 또는 코드 검색..."
+              class="w-full pl-8 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-slate-400 transition" />
+          </div>
+          <button id="btnSyncLive" onclick="syncRealStoreReviews(true)" title="실제 스토어 최신 리뷰 동기화"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 whitespace-nowrap transition">
+            <i id="syncIcon" class="fa-solid fa-rotate"></i>
+            <span>실시간 동기화</span>
+          </button>
+          <button onclick="exportAllAppsExcel()" title="전체 홈쇼핑사 통합 엑셀 다운로드"
+            class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 whitespace-nowrap transition">
+            <i class="fa-solid fa-file-excel"></i>
+            <span class="hidden md:inline">전체 엑셀</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 실시간 데이터 수집 상태 바 -->
+      <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200/80 text-xs text-slate-600">
+        <div class="flex items-center gap-2">
+          <span id="liveStatusDot" class="w-2 h-2 rounded-full bg-amber-400"></span>
+          <span id="liveStatusText">스토어 리뷰 데이터를 불러오는 중입니다...</span>
+        </div>
+        <div class="text-[11px] text-slate-400 font-mono" id="lastSyncTimeText"></div>
+      </div>
+      </div>
+
+      <!-- 관리자 안내 배너 (로그인 시 노출) -->
+      <div id="adminBanner" class="hidden items-center justify-between gap-3 px-4 py-3 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs sm:text-sm">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-shield-halved text-indigo-600"></i>
+          <span><strong>관리자 모드 활성화됨</strong> (khojun0@hnsmall.com) — 새로운 쇼핑몰 앱을 추가하거나 기존 앱을 관리할 수 있습니다.</span>
+        </div>
+        <button onclick="openAddSiteModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 whitespace-nowrap">
+          + 새 사이트 추가
+        </button>
+      </div>
+
+      <!-- 앱 카드 그리드 (review.stlee.kr 스타일) -->
+      <div id="appCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- VIEW 2: 앱 상세 리뷰 페이지 (#/{appId}/{page}) -->
+    <!-- =================================================================== -->
+    <section id="detailView" class="hidden space-y-5">
+
+      <!-- 상단 빠른 앱 전환 탭 바 -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button onclick="goHome(event)"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 shrink-0 transition">
+          <i class="fa-solid fa-grid-2"></i>
+          <span>전체 목록</span>
+        </button>
+        <div class="h-4 w-px bg-slate-300 shrink-0"></div>
+        <div id="quickAppTabs" class="flex items-center gap-1.5">
+          <!-- JS 동적 탭 -->
+        </div>
+      </div>
+
+      <!-- 앱 헤더 & 통합 평점 요약 카드 -->
+      <div class="bg-white rounded-xl border border-slate-200/90 p-4 sm:p-6 shadow-sm">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <!-- 좌측 앱 정보 -->
+          <div class="flex items-start sm:items-center gap-3.5">
+            <div id="detailAppIcon" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-white font-extrabold text-lg sm:text-xl shrink-0 shadow-sm">
+              GS
+            </div>
+            <div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span id="detailAppSlug" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">gsshop</span>
+                <h1 id="detailAppName" class="text-lg sm:text-2xl font-extrabold text-slate-900">GS홈쇼핑 (GS SHOP)</h1>
+                <span id="detailRouteBadge" class="text-[11px] font-mono text-slate-400">#/1/1</span>
+              </div>
+              <p id="detailAppDesc" class="text-xs sm:text-sm text-slate-500 mt-1">모바일 라이브 커머스 및 TV홈쇼핑 통합 앱 리뷰 스트림</p>
+            </div>
+          </div>
+
+          <!-- 우측 OS별 평점 요약 + 엑셀 다운로드 -->
+          <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
+            <!-- Android 평점 박스 -->
+            <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
+              <i class="fa-brands fa-android text-emerald-600 text-base"></i>
+              <div>
+                <div class="text-[10px] font-semibold text-emerald-800 uppercase">Android</div>
+                <div id="detailAndroidScore" class="text-xs sm:text-sm font-bold text-slate-900">4.3 ★ (0)</div>
+              </div>
+            </div>
+
+            <!-- iOS 평점 박스 -->
+            <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-50/70 border border-sky-200/80">
+              <i class="fa-brands fa-apple text-slate-800 text-base"></i>
+              <div>
+                <div class="text-[10px] font-semibold text-sky-800 uppercase">iOS</div>
+                <div id="detailIosScore" class="text-xs sm:text-sm font-bold text-slate-900">4.5 ★ (0)</div>
+              </div>
+            </div>
+
+            <!-- 엑셀 다운로드 버튼 -->
+            <button onclick="exportCurrentAppExcel()"
+              class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition">
+              <i class="fa-solid fa-file-excel"></i>
+              <span>엑셀 다운로드</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 필터 & 기간 선택 컨트롤 패널 -->
+      <div class="bg-white rounded-xl border border-slate-200/90 p-4 shadow-sm space-y-3">
+        <!-- 1행: OS 탭 + 별점 필터 + 검색창 -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <!-- OS 선택 세그먼트 -->
+          <div class="inline-flex p-1 rounded-lg bg-slate-100 border border-slate-200/70 self-start">
+            <button onclick="setOsFilter('ALL')" id="osTabALL"
+              class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition bg-white text-slate-900 shadow-sm">
+              전체 OS
+            </button>
+            <button onclick="setOsFilter('Android')" id="osTabAndroid"
+              class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
+              <i class="fa-brands fa-android text-emerald-600"></i> Android
+            </button>
+            <button onclick="setOsFilter('iOS')" id="osTabiOS"
+              class="px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5">
+              <i class="fa-brands fa-apple text-slate-800"></i> iOS
+            </button>
+          </div>
+
+          <!-- 우측 별점 + 검색 -->
+          <div class="flex flex-wrap items-center gap-2">
+            <select id="ratingFilter" onchange="onFilterChange()"
+              class="px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg font-medium text-slate-700 focus:outline-none focus:border-slate-400">
+              <option value="ALL">전체 별점</option>
+              <option value="5">★★★★★ (5점)</option>
+              <option value="4">★★★★☆ (4점)</option>
+              <option value="3">★★★☆☆ (3점)</option>
+              <option value="2">★★☆☆☆ (2점)</option>
+              <option value="1">★☆☆☆☆ (1점)</option>
+              <option value="LOW">부정 리뷰 (1~2점)</option>
+            </select>
+
+            <select id="statusFilter" onchange="onFilterChange()"
+              class="px-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg font-medium text-slate-700 focus:outline-none focus:border-slate-400">
+              <option value="ALL">대응 상태 전체</option>
+              <option value="미확인">미확인</option>
+              <option value="검토중">검토중</option>
+              <option value="답변완료">답변완료</option>
+            </select>
+
+            <div class="relative flex-1 sm:w-56 min-w-[160px]">
+              <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+              <input id="reviewSearchInput" type="text" oninput="onFilterChange()" placeholder="리뷰 내용, 작성자 검색..."
+                class="w-full pl-8 pr-3 py-2 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-slate-400" />
+            </div>
+          </div>
+        </div>
+
+        <!-- 2행: 기간 선택 프리셋 & 직접 날짜 지정 -->
+        <div class="pt-3 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-xs font-semibold text-slate-500 mr-1"><i class="fa-regular fa-calendar mr-1"></i>조회 기간:</span>
+            <button onclick="applyDatePreset('ALL')" data-preset="ALL" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white">전체기간</button>
+            <button onclick="applyDatePreset('7D')" data-preset="7D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 7일</button>
+            <button onclick="applyDatePreset('30D')" data-preset="30D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 30일</button>
+            <button onclick="applyDatePreset('90D')" data-preset="90D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 3개월</button>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2 text-xs">
+            <input type="date" id="startDateInput" onchange="onCustomDateChange()"
+              class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:border-slate-400" />
+            <span class="text-slate-400">~</span>
+            <input type="date" id="endDateInput" onchange="onCustomDateChange()"
+              class="px-2.5 py-1.5 rounded-lg border border-slate-200 bg-slate-50 text-slate-700 focus:outline-none focus:border-slate-400" />
+            <button onclick="resetAllFilters()" class="px-2.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 font-medium">
+              <i class="fa-solid fa-rotate-left mr-1"></i>초기화
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 검색 결과 카운트 및 정렬 바 -->
+      <div class="flex items-center justify-between text-xs sm:text-sm text-slate-600 px-1">
+        <div>
+          검색 결과 <strong id="filteredCountText" class="text-slate-900">0</strong>건
+          <span id="activePeriodBadge" class="ml-2 text-xs text-slate-400"></span>
+        </div>
+        <div class="flex items-center gap-2">
+          <label for="sortOrderSelect" class="text-xs text-slate-500">정렬:</label>
+          <select id="sortOrderSelect" onchange="onFilterChange()"
+            class="text-xs font-medium bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none">
+            <option value="NEWEST">최신순</option>
+            <option value="OLDEST">오래된순</option>
+            <option value="RATING_LOW">별점 낮은순</option>
+            <option value="RATING_HIGH">별점 높은순</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 리뷰 리스트 영역 -->
+      <div id="reviewsListContainer" class="space-y-3">
+        <!-- JS 동적 렌더링 -->
+      </div>
+
+      <!-- 페이지네이션 -->
+      <div id="paginationContainer" class="flex items-center justify-center gap-1.5 pt-3 pb-6">
+        <!-- JS 동적 렌더링 -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- 푸터 -->
+  <!-- ===================================================================== -->
+  <footer class="bg-white border-t border-slate-200/80 py-5 mt-auto">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+      <div>REVIEW-SCRAPER · 홈쇼핑 모바일 앱(Android / iOS) 통합 리뷰 모니터링 대시보드</div>
+      <div>팀 협업용 상태 관리 및 엑셀 추출 지원</div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 1: 관리자 로그인 / 아이디·비밀번호 찾기 / 비밀번호 변경 -->
+  <!-- ===================================================================== -->
+  <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+      <!-- 모달 헤더 -->
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-user-shield text-indigo-600"></i>
+          <span id="adminModalTitle">관리자 인증</span>
+        </h3>
+        <button onclick="closeAdminModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- 비로그인 상태 탭 (로그인 / 아이디 찾기 / 비밀번호 찾기) -->
+      <div id="adminAuthTabs" class="grid grid-cols-3 border-b border-slate-100 bg-slate-50 text-xs font-semibold">
+        <button onclick="switchAdminTab('LOGIN')" id="tabAdminLOGIN" class="py-2.5 text-indigo-600 border-b-2 border-indigo-600 bg-white">로그인</button>
+        <button onclick="switchAdminTab('FIND_ID')" id="tabAdminFIND_ID" class="py-2.5 text-slate-500 hover:text-slate-800">아이디 찾기</button>
+        <button onclick="switchAdminTab('RESET_PW')" id="tabAdminRESET_PW" class="py-2.5 text-slate-500 hover:text-slate-800">비밀번호 찾기</button>
+      </div>
+
+      <div class="p-5">
+        <!-- 1) 로그인 폼 -->
+        <form id="formAdminLogin" onsubmit="submitAdminLogin(event)" class="space-y-3.5">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">관리자 아이디 (이메일)</label>
+            <input type="email" id="loginEmailInput" required placeholder="khojun0@hnsmall.com"
+              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">비밀번호</label>
+            <input type="password" id="loginPasswordInput" required placeholder="비밀번호를 입력하세요"
+              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+          </div>
+          <p id="loginErrorMsg" class="hidden text-xs text-rose-600 font-medium"></p>
+          <button type="submit" class="w-full py-2.5 rounded-lg bg-slate-900 hover:bg-indigo-600 text-white text-sm font-semibold transition">
+            관리자 로그인
+          </button>
+        </form>
+
+        <!-- 2) 아이디 찾기 폼 -->
+        <div id="formFindId" class="hidden space-y-3.5">
+          <p class="text-xs text-slate-500 leading-relaxed">
+            등록된 사내 도메인 또는 관리자 소속 회사명을 입력하면 등록된 관리자 아이디(이메일)를 확인할 수 있습니다.
+          </p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">소속 회사 / 사내 도메인 키워드</label>
+            <input type="text" id="findIdKeyword" placeholder="예: 홈앤쇼핑 또는 hnsmall"
+              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+          </div>
+          <button type="button" onclick="handleFindAdminId()" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition">
+            관리자 아이디 조회
+          </button>
+          <div id="findIdResultBox" class="hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-900"></div>
+        </div>
+
+        <!-- 3) 비밀번호 찾기 / 재설정 폼 -->
+        <div id="formResetPw" class="hidden space-y-3.5">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">관리자 이메일 입력</label>
+            <div class="flex gap-2">
+              <input type="email" id="resetEmailInput" placeholder="khojun0@hnsmall.com"
+                class="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+              <button type="button" onclick="sendVerificationCode()" class="px-3 py-2 rounded-lg bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700 whitespace-nowrap">
+                인증코드 발급
+              </button>
+            </div>
+          </div>
+
+          <div id="resetCodeSection" class="hidden space-y-3 pt-2 border-t border-slate-100">
+            <div id="issuedCodeHint" class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900"></div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">인증코드 6자리</label>
+              <input type="text" id="verifyCodeInput" placeholder="발급된 인증코드 입력"
+                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">새 비밀번호</label>
+              <input type="password" id="newPasswordInput" placeholder="새 비밀번호 입력"
+                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+            </div>
+            <button type="button" onclick="confirmPasswordReset()" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition">
+              비밀번호 재설정 완료
+            </button>
+          </div>
+          <p id="resetErrorMsg" class="hidden text-xs text-rose-600 font-medium"></p>
+        </div>
+
+        <!-- 4) 로그인 완료 후 관리자 계정 패널 -->
+        <div id="adminLoggedInPanel" class="hidden space-y-4">
+          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
+            <div class="text-xs text-slate-500">현재 로그인된 관리자 계정</div>
+            <div class="text-sm font-bold text-slate-900" id="loggedInEmailDisplay">khojun0@hnsmall.com</div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <button onclick="closeAdminModal(); openAddSiteModal();" class="py-2.5 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> 사이트 추가
+            </button>
+            <button onclick="logoutAdmin()" class="py-2.5 px-3 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold flex items-center justify-center gap-1.5">
+              <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 2: 사이트 추가 모달 (관리자 전용) -->
+  <!-- ===================================================================== -->
+  <div id="addSiteModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-square-plus text-indigo-600"></i>
+          새 모니터링 앱(사이트) 추가
+        </h3>
+        <button onclick="closeAddSiteModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <form onsubmit="submitAddSite(event)" class="p-5 space-y-3.5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">앱 / 회사명 *</label>
+            <input type="text" id="newSiteName" required placeholder="예: SSG.COM 또는 쇼핑엔티"
+              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">영문 슬러그 코드 *</label>
+            <input type="text" id="newSiteSlug" required placeholder="예: ssg 또는 shoppingnt"
+              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">한줄 설명</label>
+          <input type="text" id="newSiteDesc" placeholder="예: 모바일 라이브 및 통합 쇼핑 앱 리뷰"
+            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Android 패키지명</label>
+            <input type="text" id="newSiteAndroidPkg" placeholder="com.example.app"
+              class="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">iOS App Store ID</label>
+            <input type="text" id="newSiteIosId" placeholder="id123456789"
+              class="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">대표 컬러 테마</label>
+          <select id="newSiteColor" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white">
+            <option value="bg-indigo-600">인디고 블루 (Indigo)</option>
+            <option value="bg-emerald-600">에메랄드 그린 (Emerald)</option>
+            <option value="bg-rose-600">로즈 레드 (Rose)</option>
+            <option value="bg-amber-600">앰버 오렌지 (Amber)</option>
+            <option value="bg-sky-600">스카이 블루 (Sky)</option>
+            <option value="bg-violet-600">바이올렛 퍼플 (Violet)</option>
+            <option value="bg-slate-800">다크 슬레이트 (Slate)</option>
+          </select>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="closeAddSiteModal()" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100">취소</button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700">
+            사이트 등록하기
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- MODAL 3: 설정 모달 (페이지당 개수, 기본 기간, 키워드 하이라이트 등) -->
+  <!-- ===================================================================== -->
+  <div id="settingsModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-slate-700"></i>
+          대시보드 표시 및 기간 설정
+        </h3>
+        <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4 text-sm">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">페이지당 표시할 리뷰 수</label>
+          <select id="settingPageSize" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-sm">
+            <option value="5">5개씩 보기</option>
+            <option value="10" selected>10개씩 보기</option>
+            <option value="20">20개씩 보기</option>
+            <option value="50">50개씩 보기</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">기본 조회 기간 설정</label>
+          <select id="settingDefaultPeriod" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-sm">
+            <option value="ALL">전체 기간</option>
+            <option value="7D">최근 7일</option>
+            <option value="30D">최근 30일</option>
+            <option value="90D">최근 3개월</option>
+          </select>
+        </div>
+
+        <div class="flex items-center justify-between py-2 border-t border-slate-100">
+          <div>
+            <div class="font-semibold text-xs text-slate-800">개발자(스토어) 공식 답변 표시</div>
+            <div class="text-[11px] text-slate-400">앱 담당자가 남긴 답글을 카드 하단에 노출합니다.</div>
+          </div>
+          <input type="checkbox" id="settingShowReply" checked class="w-4 h-4 accent-indigo-600 rounded" />
+        </div>
+
+        <div class="flex items-center justify-between py-2 border-t border-slate-100">
+          <div>
+            <div class="font-semibold text-xs text-slate-800">검색어 노란색 하이라이트</div>
+            <div class="text-[11px] text-slate-400">검색한 키워드를 리뷰 본문에서 강조 표시합니다.</div>
+          </div>
+          <input type="checkbox" id="settingHighlight" checked class="w-4 h-4 accent-indigo-600 rounded" />
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100">닫기</button>
+          <button onclick="saveDashboardSettings()" class="px-4 py-2 rounded-lg text-xs font-semibold text-white bg-slate-900 hover:bg-indigo-600">
+            설정 저장
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- 토스트 알림 컨테이너 -->
+  <!-- ===================================================================== -->
+  <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <!-- ===================================================================== -->
+  <script>
+    // -----------------------------------------------------------------------
+    // 1. 관리자 계정 정보 및 전역 상태
+    // -----------------------------------------------------------------------
+    const ADMIN_ACCOUNT = {
+      email: 'khojun0@hnsmall.com',
+      password: 'ghwnsguswls1!',
+      company: '홈앤쇼핑'
+    };
+
+    let state = {
+      isAdmin: false,
+      issuedResetCode: null,
+      currentView: 'HOME', // 'HOME' | 'DETAIL'
+      currentAppId: 1,
+      currentPage: 1,
+      osFilter: 'ALL',     // 'ALL' | 'Android' | 'iOS'
+      ratingFilter: 'ALL',
+      statusFilter: 'ALL',
+      searchQuery: '',
+      startDate: '',
+      endDate: '',
+      datePreset: 'ALL',
+      sortOrder: 'NEWEST',
+      settings: {
+        pageSize: 10,
+        defaultPeriod: 'ALL',
+        showDevReply: true,
+        highlightKeyword: true
+      }
+    };
+
+    // -----------------------------------------------------------------------
+    // 2. 기본 7대 홈쇼핑사 데이터 + 샘플 리뷰 생성기
+    // -----------------------------------------------------------------------
+    const DEFAULT_APPS = [
+      {
+        id: 1,
+        slug: 'gsshop',
+        shortCode: 'GS',
+        name: 'GS홈쇼핑',
+        subName: 'GS SHOP',
+        desc: '샤피라이브 & TV홈쇼핑 모바일 통합 앱',
+        color: 'bg-emerald-600',
+        androidPkg: 'gsshop.mobile.v2',
+        iosId: 'id417408265'
+      },
+      {
+        id: 2,
+        slug: 'cjonstyle',
+        shortCode: 'CJ',
+        name: 'CJ오쇼핑',
+        subName: 'CJ온스타일',
+        desc: '원플랫폼 모바일 라이브 커머스 & 쇼츠 앱',
+        color: 'bg-violet-600',
+        androidPkg: 'com.cjoshoping.cjmall',
+        iosId: 'id426243952'
+      },
+      {
+        id: 3,
+        slug: 'hmall',
+        shortCode: 'HM',
+        name: '현대홈쇼핑',
+        subName: '현대Hmall',
+        desc: '현대홈쇼핑·백화점 통합 온라인 쇼핑 앱',
+        color: 'bg-slate-800',
+        androidPkg: 'com.hmallapp',
+        iosId: 'id446257206'
+      },
+      {
+        id: 4,
+        slug: 'lotteimall',
+        shortCode: 'LT',
+        name: '롯데홈쇼핑',
+        subName: '롯데아이몰',
+        desc: '벨리곰 & 모바일 TV 라이브 쇼핑 앱',
+        color: 'bg-rose-600',
+        androidPkg: 'com.lotte.lotteimall',
+        iosId: 'id438067397'
+      },
+      {
+        id: 5,
+        slug: 'hnsmall',
+        shortCode: 'H&S',
+        name: '홈앤쇼핑',
+        subName: 'H&S Mall',
+        desc: '텐텐프로모션 & 중소기업 상생 모바일 쇼핑 앱',
+        color: 'bg-indigo-600',
+        androidPkg: 'com.hnsmall',
+        iosId: 'id482441403'
+      },
+      {
+        id: 6,
+        slug: 'nsmall',
+        shortCode: 'NS',
+        name: 'NS홈쇼핑',
+        subName: 'NS Mall',
+        desc: '식품·건강기능식품 특화 TV홈쇼핑 모바일 앱',
+        color: 'bg-amber-600',
+        androidPkg: 'com.nsmall',
+        iosId: 'id491234510'
+      },
+      {
+        id: 7,
+        slug: 'gongyoung',
+        shortCode: '공영',
+        name: '공영홈쇼핑',
+        subName: '공영쇼핑',
+        desc: '우리 중소기업·농축수산물 전문 공영 쇼핑 앱',
+        color: 'bg-sky-600',
+        androidPkg: 'kr.co.gongyoung.shop',
+        iosId: 'id1021234987'
+      }
+    ];
+
+    let appsData = [...DEFAULT_APPS];
+    let reviewsData = [];
+
+    // 현실적인 홈쇼핑 모바일 앱 리뷰 목업 생성
+    function generateInitialReviews() {
+      const sampleTemplates = [
+        { os: 'Android', rating: 5, author: '김*연', version: '8.42.1', content: '라이브 방송 보면서 바로 적립금 받고 결제하니까 너무 편해요! 배송도 다음날 바로 도착해서 만족합니다.', devReply: '안녕하세요 고객님! 만족스러운 쇼핑 경험을 드릴 수 있어 기쁩니다. 앞으로도 더 좋은 혜택으로 보답하겠습니다.' },
+        { os: 'iOS', rating: 2, author: '박*훈', version: '8.41.0', content: '아이폰 업데이트 이후로 라이브 방송 전체화면 전환할 때 가끔 화면이 멈추는 현상이 있습니다. 빠른 수정 부탁드려요.', devReply: '이용에 불편을 드려 죄송합니다. 해당 iOS 전체화면 재생 오류는 다음 패치(v8.42.2)에서 긴급 수정 반영될 예정입니다.' },
+        { os: 'Android', rating: 4, author: '이*정', version: '8.42.1', content: '쿠폰 적용이 한눈에 보여서 할인받기 좋네요. 다만 장바구니에서 옵션 변경할 때 한 번에 바뀌면 더 좋겠습니다.', devReply: '' },
+        { os: 'iOS', rating: 5, author: '최*영', version: '8.42.0', content: '방송 알림 설정해두니까 원하는 상품 방송 시작할 때 딱 알려줘서 놓치지 않고 구매했어요. UI가 깔끔합니다.', devReply: '' },
+        { os: 'Android', rating: 1, author: '정*수', version: '8.40.5', content: '간편결제 비밀번호 입력창에서 키패드가 늦게 올라옵니다. 결제 단계 속도가 조금 더 빨라졌으면 좋겠어요.', devReply: '소중한 의견 감사합니다. 결제 모듈 로딩 속도 개선 작업을 진행 중입니다.' },
+        { os: 'iOS', rating: 4, author: '한*미', version: '8.42.0', content: '상품 검색 필터가 세분화되어 있어서 원하는 가격대랑 무료배송 상품 찾기가 정말 수월해졌어요.', devReply: '' },
+        { os: 'Android', rating: 5, author: '강*우', version: '8.42.1', content: '부모님 선물 사드릴 때마다 자주 이용합니다. 편성표 보기도 쉽고 주문 내역 조회도 직관적이에요.', devReply: '' },
+        { os: 'iOS', rating: 3, author: '윤*서', version: '8.41.2', content: '전반적으로 무난한데 앱 처음 켤 때 이벤트 팝업이 두 번 연속 뜨는 건 조금 번거롭네요. 오늘 하루 보지 않기가 잘 작동했으면 합니다.', devReply: '' },
+        { os: 'Android', rating: 5, author: '조*현', version: '8.42.1', content: '출석체크 이벤트랑 룰렛 적립금 쏠쏠해서 매일 들어가게 됩니다. 최근 리뉴얼 후 속도가 확실히 빨라졌어요!', devReply: '' },
+        { os: 'iOS', rating: 2, author: '송*아', version: '8.41.0', content: '페이스ID 로그인이 가끔 풀려서 아이디 비밀번호를 다시 입력해야 할 때가 있어요. 확인 부탁드립니다.', devReply: '생체인증 세션 유지 관련 현상을 면밀히 점검하여 개선하겠습니다.' },
+        { os: 'Android', rating: 4, author: '임*진', version: '8.42.0', content: '모바일 전용 특가 상품이 많아서 TV보다 앱으로 주문하는 게 훨씬 이득이네요. 만족합니다.', devReply: '' },
+        { os: 'iOS', rating: 5, author: '신*희', version: '8.42.2', content: '교환/반품 신청 절차가 앱 안에서 터치 몇 번으로 끝나서 고객센터 전화할 필요가 없어 너무 좋아요.', devReply: '' }
+      ];
+
+      const statuses = ['미확인', '검토중', '답변완료'];
+      const memos = [
+        '',
+        'QA팀 재현 테스트 요청 완료',
+        '차주 정기 배포 패치 목록 반영',
+        '',
+        'CS팀 공통 안내 문구 전달됨',
+        ''
+      ];
+
+      let idCounter = 1001;
+      const now = new Date();
+
+      appsData.forEach((app, appIdx) => {
+        // 각 홈쇼핑사별로 24개씩 다양한 날짜의 리뷰 생성
+        for (let i = 0; i < 24; i++) {
+          const tpl = sampleTemplates[(i + appIdx * 3) % sampleTemplates.length];
+          const daysAgo = Math.floor((i * 4.2) + (appIdx % 3));
+          const reviewDate = new Date(now);
+          reviewDate.setDate(now.getDate() - daysAgo);
+          const dateStr = formatDateISO(reviewDate);
+
+          reviewsData.push({
+            id: idCounter++,
+            appId: app.id,
+            os: i % 2 === 0 ? 'Android' : 'iOS',
+            rating: tpl.rating,
+            author: tpl.author,
+            date: dateStr,
+            version: tpl.version,
+            content: `[${app.name}] ${tpl.content}`,
+            devReply: tpl.devReply,
+            teamStatus: tpl.devReply ? '답변완료' : statuses[(i + appIdx) % statuses.length],
+            teamMemo: memos[(i + appIdx) % memos.length]
+          });
+        }
+      });
+    }
+
+    // -----------------------------------------------------------------------
+    // 3. 유틸리티 함수
+    // -----------------------------------------------------------------------
+    function formatDateISO(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function highlightText(text, keyword) {
+      const safeText = escapeHtml(text);
+      if (!keyword || !state.settings.highlightKeyword) return safeText;
+      const escapedKw = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedKw})`, 'gi');
+      return safeText.replace(regex, '<mark class="bg-amber-200 text-slate-900 px-0.5 rounded">$1</mark>');
+    }
+
+    function renderStars(rating) {
+      let html = '<span class="inline-flex items-center gap-0.5 text-amber-400 text-xs">';
+      for (let i = 1; i <= 5; i++) {
+        if (i <= rating) {
+          html += '<i class="fa-solid fa-star"></i>';
+        } else {
+          html += '<i class="fa-regular fa-star text-slate-300"></i>';
+        }
+      }
+      html += '</span>';
+      return html;
+    }
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const el = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-600 text-white',
+        error: 'bg-rose-600 text-white',
+        info: 'bg-slate-900 text-white'
+      };
+      el.className = `${colors[type] || colors.info} px-4 py-2.5 rounded-xl shadow-lg text-xs sm:text-sm font-medium flex items-center gap-2 transition-all duration-300`;
+      el.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : type === 'error' ? 'fa-circle-exclamation' : 'fa-circle-info'}"></i><span>${escapeHtml(message)}</span>`;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+      }, 2800);
+    }
+
+    // -----------------------------------------------------------------------
+    // 4. 라우팅 처리 (review.stlee.kr 해시 라우팅 호환: #/ 및 #/{id}/{page})
+    // -----------------------------------------------------------------------
+    function parseHashRoute() {
+      const hash = window.location.hash || '#/';
+      const match = hash.match(/^#\/(\d+)(?:\/(\d+))?$/);
+      if (match) {
+        const appId = parseInt(match[1], 10);
+        const page = match[2] ? parseInt(match[2], 10) : 1;
+        const exists = appsData.find(a => a.id === appId);
+        if (exists) {
+          state.currentView = 'DETAIL';
+          state.currentAppId = appId;
+          state.currentPage = Math.max(1, page);
+          renderApp();
+          return;
+        }
+      }
+      state.currentView = 'HOME';
+      renderApp();
+    }
+
+    function navigateToApp(appId, page = 1) {
+      window.location.hash = `#/${appId}/${page}`;
+    }
+
+    function goHome(e) {
+      if (e) e.preventDefault();
+      window.location.hash = '#/';
+    }
+
+    window.addEventListener('hashchange', parseHashRoute);
+
+    // -----------------------------------------------------------------------
+    // 5. 메인 화면 렌더링 분기
+    // -----------------------------------------------------------------------
+    function renderApp() {
+      updateAdminUI();
+      const homeView = document.getElementById('homeView');
+      const detailView = document.getElementById('detailView');
+
+      if (state.currentView === 'HOME') {
+        document.title = 'Home | REVIEW-SCRAPER';
+        homeView.classList.remove('hidden');
+        detailView.classList.add('hidden');
+        renderHomeGrid();
+      } else {
+        const app = appsData.find(a => a.id === state.currentAppId) || appsData[0];
+        document.title = `${app.name} | REVIEW-SCRAPER`;
+        homeView.classList.add('hidden');
+        detailView.classList.remove('hidden');
+        renderDetailView();
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // 6. VIEW 1: 홈 화면 앱 카드 그리드 렌더링
+    // -----------------------------------------------------------------------
+    function renderHomeGrid() {
+      const grid = document.getElementById('appCardsGrid');
+      const kw = (document.getElementById('homeAppSearch')?.value || '').trim().toLowerCase();
+
+      const filteredApps = appsData.filter(app =>
+        app.name.toLowerCase().includes(kw) ||
+        app.subName.toLowerCase().includes(kw) ||
+        app.slug.toLowerCase().includes(kw)
+      );
+
+      document.getElementById('totalAppCountBadge').textContent = `${appsData.length}개`;
+
+      if (filteredApps.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white rounded-xl border border-slate-200 p-10 text-center text-slate-400 text-sm">
+            검색어와 일치하는 앱이 없습니다.
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filteredApps.map(app => {
+        const appReviews = reviewsData.filter(r => r.appId === app.id);
+        const androidReviews = appReviews.filter(r => r.os === 'Android');
+        const iosReviews = appReviews.filter(r => r.os === 'iOS');
+
+        const avgAll = appReviews.length
+          ? (appReviews.reduce((acc, r) => acc + r.rating, 0) / appReviews.length).toFixed(1)
+          : '0.0';
+        const avgAndroid = androidReviews.length
+          ? (androidReviews.reduce((acc, r) => acc + r.rating, 0) / androidReviews.length).toFixed(1)
+          : '-';
+        const avgIos = iosReviews.length
+          ? (iosReviews.reduce((acc, r) => acc + r.rating, 0) / iosReviews.length).toFixed(1)
+          : '-';
+
+        const unconfirmedCount = appReviews.filter(r => r.teamStatus === '미확인').length;
+
+        return `
+          <div onclick="navigateToApp(${app.id}, 1)"
+            class="app-card cursor-pointer bg-white rounded-xl border border-slate-200/90 p-5 flex flex-col justify-between relative group">
+            
+            <!-- 관리자 삭제 버튼 (기본 7개 이후 추가된 사이트 또는 관리자 모드) -->
+            ${state.isAdmin ? `
+              <button onclick="deleteSite(event, ${app.id})" title="사이트 삭제"
+                class="absolute top-3 right-3 w-7 h-7 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs transition z-10">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            ` : ''}
+
+            <div>
+              <div class="flex items-center gap-3 mb-3">
+                <div class="w-11 h-11 rounded-xl ${app.color} text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs">
+                  ${escapeHtml(app.shortCode)}
+                </div>
+                <div class="min-w-0">
+                  <div class="text-[11px] font-mono text-slate-400 truncate">${escapeHtml(app.slug)}</div>
+                  <h2 class="text-base font-bold text-slate-900 truncate group-hover:text-indigo-600 transition-colors">
+                    ${escapeHtml(app.name)}
+                  </h2>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-500 line-clamp-2 mb-4 min-h-[32px]">
+                ${escapeHtml(app.desc)}
+              </p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 space-y-2.5">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-semibold text-slate-700 flex items-center gap-1">
+                  <i class="fa-solid fa-star text-amber-400"></i> 평균 ${avgAll}
+                </span>
+                <span class="text-slate-400">총 ${appReviews.length}건</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-1.5 text-[11px]">
+                <div class="px-2 py-1 rounded bg-slate-50 border border-slate-100 flex items-center justify-between">
+                  <span class="text-emerald-700 font-medium"><i class="fa-brands fa-android mr-1"></i>AOS</span>
+                  <span class="font-bold text-slate-700">${avgAndroid}</span>
+                </div>
+                <div class="px-2 py-1 rounded bg-slate-50 border border-slate-100 flex items-center justify-between">
+                  <span class="text-slate-700 font-medium"><i class="fa-brands fa-apple mr-1"></i>iOS</span>
+                  <span class="font-bold text-slate-700">${avgIos}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-[11px] pt-0.5">
+                <span class="text-slate-400 font-mono">#/${app.id}/1</span>
+                ${unconfirmedCount > 0
+                  ? `<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-200/70">미확인 ${unconfirmedCount}건</span>`
+                  : `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold">모두 확인됨</span>`
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // -----------------------------------------------------------------------
+    // 7. VIEW 2: 앱 상세 리뷰 페이지 렌더링
+    // -----------------------------------------------------------------------
+    function getFilteredReviewsForCurrentApp() {
+      let list = reviewsData.filter(r => r.appId === state.currentAppId);
+
+      // OS 필터
+      if (state.osFilter !== 'ALL') {
+        list = list.filter(r => r.os === state.osFilter);
+      }
+
+      // 별점 필터
+      if (state.ratingFilter !== 'ALL') {
+        if (state.ratingFilter === 'LOW') {
+          list = list.filter(r => r.rating <= 2);
+        } else {
+          const targetRating = parseInt(state.ratingFilter, 10);
+          list = list.filter(r => r.rating === targetRating);
+        }
+      }
+
+      // 대응 상태 필터
+      if (state.statusFilter !== 'ALL') {
+        list = list.filter(r => r.teamStatus === state.statusFilter);
+      }
+
+      // 기간 필터
+      if (state.startDate) {
+        list = list.filter(r => r.date >= state.startDate);
+      }
+      if (state.endDate) {
+        list = list.filter(r => r.date <= state.endDate);
+      }
+
+      // 검색어 필터
+      if (state.searchQuery.trim()) {
+        const kw = state.searchQuery.trim().toLowerCase();
+        list = list.filter(r =>
+          r.content.toLowerCase().includes(kw) ||
+          r.author.toLowerCase().includes(kw) ||
+          (r.teamMemo && r.teamMemo.toLowerCase().includes(kw))
+        );
+      }
+
+      // 정렬
+      list.sort((a, b) => {
+        if (state.sortOrder === 'NEWEST') return b.date.localeCompare(a.date) || b.id - a.id;
+        if (state.sortOrder === 'OLDEST') return a.date.localeCompare(b.date) || a.id - b.id;
+        if (state.sortOrder === 'RATING_LOW') return a.rating - b.rating || b.date.localeCompare(a.date);
+        if (state.sortOrder === 'RATING_HIGH') return b.rating - a.rating || b.date.localeCompare(a.date);
+        return 0;
+      });
+
+      return list;
+    }
+
+    function renderDetailView() {
+      const app = appsData.find(a => a.id === state.currentAppId) || appsData[0];
+
+      // 상단 빠른 앱 전환 탭 렌더링
+      const quickTabs = document.getElementById('quickAppTabs');
+      quickTabs.innerHTML = appsData.map(item => {
+        const isActive = item.id === app.id;
+        return `
+          <button onclick="navigateToApp(${item.id}, 1)"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${
+              isActive
+                ? 'bg-slate-900 text-white shadow-xs'
+                : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+            }">
+            ${escapeHtml(item.name)}
+          </button>
+        `;
+      }).join('');
+
+      // 앱 헤더 정보 업데이트
+      const iconEl = document.getElementById('detailAppIcon');
+      iconEl.className = `w-12 h-12 sm:w-14 sm:h-14 rounded-2xl ${app.color} flex items-center justify-center text-white font-extrabold text-lg sm:text-xl shrink-0 shadow-sm`;
+      iconEl.textContent = app.shortCode;
+
+      document.getElementById('detailAppSlug').textContent = app.slug;
+      document.getElementById('detailAppName').textContent = `${app.name} (${app.subName})`;
+      document.getElementById('detailRouteBadge').textContent = `#/${app.id}/${state.currentPage}`;
+      document.getElementById('detailAppDesc').textContent = app.desc;
+
+      // OS별 평점 요약
+      const allAppReviews = reviewsData.filter(r => r.appId === app.id);
+      const aosList = allAppReviews.filter(r => r.os === 'Android');
+      const iosList = allAppReviews.filter(r => r.os === 'iOS');
+
+      const aosAvg = aosList.length ? (aosList.reduce((s, r) => s + r.rating, 0) / aosList.length).toFixed(1) : '0.0';
+      const iosAvg = iosList.length ? (iosList.reduce((s, r) => s + r.rating, 0) / iosList.length).toFixed(1) : '0.0';
+
+      document.getElementById('detailAndroidScore').textContent = `${aosAvg} ★ (${aosList.length}건)`;
+      document.getElementById('detailIosScore').textContent = `${iosAvg} ★ (${iosList.length}건)`;
+
+      // 필터링된 리뷰 목록 계산 및 페이지네이션
+      const filtered = getFilteredReviewsForCurrentApp();
+      const pageSize = state.settings.pageSize;
+      const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (state.currentPage > totalPages) state.currentPage = totalPages;
+
+      const startIdx = (state.currentPage - 1) * pageSize;
+      const pageItems = filtered.slice(startIdx, startIdx + pageSize);
+
+      document.getElementById('filteredCountText').textContent = filtered.length;
+      const periodBadge = document.getElementById('activePeriodBadge');
+      if (state.startDate || state.endDate) {
+        periodBadge.textContent = `(${state.startDate || '처음'} ~ ${state.endDate || '현재'})`;
+      } else {
+        periodBadge.textContent = '';
+      }
+
+      const listContainer = document.getElementById('reviewsListContainer');
+      if (pageItems.length === 0) {
+        listContainer.innerHTML = `
+          <div class="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-2">
+            <div class="text-slate-300 text-3xl"><i class="fa-regular fa-folder-open"></i></div>
+            <div class="text-sm font-semibold text-slate-600">조건에 해당하는 리뷰가 없습니다.</div>
+            <div class="text-xs text-slate-400">필터 또는 조회 기간을 변경해 보세요.</div>
+          </div>
+        `;
+      } else {
+        listContainer.innerHTML = pageItems.map(rev => renderReviewCard(rev)).join('');
+      }
+
+      renderPagination(totalPages);
+    }
+
+    function renderReviewCard(rev) {
+      const isAndroid = rev.os === 'Android';
+      const osBadge = isAndroid
+        ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200"><i class="fa-brands fa-android"></i> Android</span>`
+        : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-sky-50 text-sky-700 border border-sky-200"><i class="fa-brands fa-apple"></i> iOS</span>`;
+
+      const statusColors = {
+        '미확인': 'bg-slate-100 text-slate-700 border-slate-200',
+        '검토중': 'bg-amber-50 text-amber-700 border-amber-200',
+        '답변완료': 'bg-emerald-50 text-emerald-700 border-emerald-200'
+      };
+
+      return `
+        <article class="bg-white rounded-xl border border-slate-200/90 p-4 sm:p-5 shadow-2xs hover:border-slate-300 transition space-y-3">
+          <!-- 상단 메타 정보 -->
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex flex-wrap items-center gap-2">
+              ${osBadge}
+              ${renderStars(rev.rating)}
+              <span class="text-xs font-bold text-slate-800">${escapeHtml(rev.author)}</span>
+              <span class="text-xs text-slate-400">· ${escapeHtml(rev.date)}</span>
+              <span class="text-[11px] font-mono px-1.5 py-0.5 rounded bg-slate-100 text-slate-500">v${escapeHtml(rev.version)}</span>
+            </div>
+
+            <!-- 팀 협업: 대응 상태 선택 -->
+            <div class="flex items-center gap-2">
+              <select onchange="updateReviewStatus(${rev.id}, this.value)"
+                class="text-xs font-semibold px-2.5 py-1 rounded-lg border cursor-pointer focus:outline-none ${statusColors[rev.teamStatus] || statusColors['미확인']}">
+                <option value="미확인" ${rev.teamStatus === '미확인' ? 'selected' : ''}>미확인</option>
+                <option value="검토중" ${rev.teamStatus === '검토중' ? 'selected' : ''}>검토중</option>
+                <option value="답변완료" ${rev.teamStatus === '답변완료' ? 'selected' : ''}>답변완료</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 리뷰 본문 -->
+          <p class="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line">
+            ${highlightText(rev.content, state.searchQuery)}
+          </p>
+
+          <!-- 스토어 개발자 공식 답변 -->
+          ${(state.settings.showDevReply && rev.devReply) ? `
+            <div class="p-3 rounded-lg bg-slate-50 border-l-4 border-slate-400 text-xs text-slate-600 space-y-1">
+              <div class="font-bold text-slate-700 flex items-center gap-1.5">
+                <i class="fa-solid fa-reply fa-flip-horizontal text-slate-400"></i> 스토어 담당자 답변
+              </div>
+              <p class="leading-relaxed">${escapeHtml(rev.devReply)}</p>
+            </div>
+          ` : ''}
+
+          <!-- 팀 내부 공유 메모 영역 -->
+          <div class="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center gap-2">
+            <span class="text-[11px] font-semibold text-indigo-600 shrink-0 flex items-center gap-1">
+              <i class="fa-regular fa-comment-dots"></i> 팀 공유 메모:
+            </span>
+            <input type="text" value="${escapeHtml(rev.teamMemo || '')}"
+              onchange="updateReviewMemo(${rev.id}, this.value)"
+              placeholder="팀원들과 공유할 이슈 원인이나 처리 내용을 입력 후 Enter..."
+              class="flex-1 text-xs px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 focus:bg-white focus:border-indigo-400 focus:outline-none text-slate-700" />
+          </div>
+        </article>
+      `;
+    }
+
+    function renderPagination(totalPages) {
+      const container = document.getElementById('paginationContainer');
+      if (totalPages <= 1) {
+        container.innerHTML = '';
+        return;
+      }
+
+      let buttonsHtml = '';
+      const cur = state.currentPage;
+
+      buttonsHtml += `
+        <button onclick="navigateToApp(${state.currentAppId}, ${Math.max(1, cur - 1)})"
+          ${cur === 1 ? 'disabled' : ''}
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40">
+          이전
+        </button>
+      `;
+
+      for (let p = 1; p <= totalPages; p++) {
+        buttonsHtml += `
+          <button onclick="navigateToApp(${state.currentAppId}, ${p})"
+            class="w-8 h-8 rounded-lg text-xs font-bold transition ${
+              p === cur
+                ? 'bg-slate-900 text-white'
+                : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100'
+            }">
+            ${p}
+          </button>
+        `;
+      }
+
+      buttonsHtml += `
+        <button onclick="navigateToApp(${state.currentAppId}, ${Math.min(totalPages, cur + 1)})"
+          ${cur === totalPages ? 'disabled' : ''}
+          class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40">
+          다음
+        </button>
+      `;
+
+      container.innerHTML = buttonsHtml;
+    }
+
+    // -----------------------------------------------------------------------
+    // 8. 필터, 기간 선택, 팀 메모 업데이트 이벤트
+    // -----------------------------------------------------------------------
+    function setOsFilter(os) {
+      state.osFilter = os;
+      state.currentPage = 1;
+
+      ['ALL', 'Android', 'iOS'].forEach(key => {
+        const btn = document.getElementById(`osTab${key}`);
+        if (!btn) return;
+        if (key === os) {
+          btn.className = 'px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition bg-white text-slate-900 shadow-sm flex items-center gap-1.5';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-md text-xs sm:text-sm font-semibold transition text-slate-600 hover:text-slate-900 flex items-center gap-1.5';
+        }
+      });
+
+      renderDetailView();
+    }
+
+    function onFilterChange() {
+      state.ratingFilter = document.getElementById('ratingFilter').value;
+      state.statusFilter = document.getElementById('statusFilter').value;
+      state.searchQuery = document.getElementById('reviewSearchInput').value;
+      state.sortOrder = document.getElementById('sortOrderSelect').value;
+      state.currentPage = 1;
+      renderDetailView();
+    }
+
+    function applyDatePreset(preset) {
+      state.datePreset = preset;
+      const now = new Date();
+      const endStr = formatDateISO(now);
+      let startStr = '';
+
+      if (preset === '7D') {
+        const d = new Date(now);
+        d.setDate(now.getDate() - 7);
+        startStr = formatDateISO(d);
+      } else if (preset === '30D') {
+        const d = new Date(now);
+        d.setDate(now.getDate() - 30);
+        startStr = formatDateISO(d);
+      } else if (preset === '90D') {
+        const d = new Date(now);
+        d.setDate(now.getDate() - 90);
+        startStr = formatDateISO(d);
+      }
+
+      state.startDate = startStr;
+      state.endDate = preset === 'ALL' ? '' : endStr;
+
+      document.getElementById('startDateInput').value = state.startDate;
+      document.getElementById('endDateInput').value = state.endDate;
+
+      document.querySelectorAll('.date-preset-btn').forEach(btn => {
+        if (btn.dataset.preset === preset) {
+          btn.className = 'date-preset-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white';
+        } else {
+          btn.className = 'date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200';
+        }
+      });
+
+      state.currentPage = 1;
+      renderDetailView();
+    }
+
+    function onCustomDateChange() {
+      state.startDate = document.getElementById('startDateInput').value;
+      state.endDate = document.getElementById('endDateInput').value;
+      state.datePreset = 'CUSTOM';
+
+      document.querySelectorAll('.date-preset-btn').forEach(btn => {
+        btn.className = 'date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200';
+      });
+
+      state.currentPage = 1;
+      renderDetailView();
+    }
+
+    function resetAllFilters() {
+      state.osFilter = 'ALL';
+      state.ratingFilter = 'ALL';
+      state.statusFilter = 'ALL';
+      state.searchQuery = '';
+      state.sortOrder = 'NEWEST';
+
+      document.getElementById('ratingFilter').value = 'ALL';
+      document.getElementById('statusFilter').value = 'ALL';
+      document.getElementById('reviewSearchInput').value = '';
+      document.getElementById('sortOrderSelect').value = 'NEWEST';
+
+      setOsFilter('ALL');
+      applyDatePreset('ALL');
+      showToast('필터 및 조회 기간이 초기화되었습니다.');
+    }
+
+    function updateReviewStatus(reviewId, newStatus) {
+      const target = reviewsData.find(r => r.id === reviewId);
+      if (target) {
+        target.teamStatus = newStatus;
+        showToast(`대응 상태가 '${newStatus}'(으)로 변경되었습니다.`, 'success');
+      }
+    }
+
+    function updateReviewMemo(reviewId, memoText) {
+      const target = reviewsData.find(r => r.id === reviewId);
+      if (target) {
+        target.teamMemo = memoText.trim();
+        showToast('팀 공유 메모가 저장되었습니다.', 'success');
+      }
+    }
+
+    // -----------------------------------------------------------------------
+    // 9. 엑셀(.xlsx) 다운로드 기능 (SheetJS)
+    // -----------------------------------------------------------------------
+    function exportCurrentAppExcel() {
+      const app = appsData.find(a => a.id === state.currentAppId);
+      const filtered = getFilteredReviewsForCurrentApp();
+
+      if (filtered.length === 0) {
+        showToast('다운로드할 리뷰 데이터가 없습니다.', 'error');
+        return;
+      }
+
+      const rows = filtered.map((r, idx) => ({
+        '번호': idx + 1,
+        '회사/앱명': app.name,
+        'OS': r.os,
+        '작성일': r.date,
+        '별점': r.rating,
+        '작성자': r.author,
+        '앱버전': r.version,
+        '리뷰내용': r.content,
+        '스토어답변': r.devReply || '',
+        '팀대응상태': r.teamStatus,
+        '팀공유메모': r.teamMemo || ''
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, app.name);
+
+      const today = formatDateISO(new Date());
+      XLSX.writeFile(workbook, `${app.slug}_앱리뷰_${today}.xlsx`);
+      showToast(`${app.name} 리뷰 ${filtered.length}건 엑셀 다운로드 완료!`, 'success');
+    }
+
+    function exportAllAppsExcel() {
+      const rows = reviewsData.map((r, idx) => {
+        const app = appsData.find(a => a.id === r.appId);
+        return {
+          '번호': idx + 1,
+          '회사/앱명': app ? app.name : '',
+          'OS': r.os,
+          '작성일': r.date,
+          '별점': r.rating,
+          '작성자': r.author,
+          '앱버전': r.version,
+          '리뷰내용': r.content,
+          '스토어답변': r.devReply || '',
+          '팀대응상태': r.teamStatus,
+          '팀공유메모': r.teamMemo || ''
+        };
+      });
+
+      const worksheet = XLSX.utils.json_to_sheet(rows);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, '전체홈쇼핑리뷰');
+
+      const today = formatDateISO(new Date());
+      XLSX.writeFile(workbook, `전체홈쇼핑_통합앱리뷰_${today}.xlsx`);
+      showToast(`전체 홈쇼핑사 리뷰 ${rows.length}건 엑셀 다운로드 완료!`, 'success');
+    }
+
+    // -----------------------------------------------------------------------
+    // 10. 관리자 인증 (로그인 / 아이디 찾기 / 비밀번호 찾기) & 사이트 추가/삭제
+    // -----------------------------------------------------------------------
+    function handleAdminButtonClick() {
+      openAdminModal();
+    }
+
+    function openAdminModal() {
+      const modal = document.getElementById('adminModal');
+      modal.classList.remove('hidden');
+
+      if (state.isAdmin) {
+        document.getElementById('adminModalTitle').textContent = '관리자 계정 관리';
+        document.getElementById('adminAuthTabs').classList.add('hidden');
+        document.getElementById('formAdminLogin').classList.add('hidden');
+        document.getElementById('formFindId').classList.add('hidden');
+        document.getElementById('formResetPw').classList.add('hidden');
+        document.getElementById('adminLoggedInPanel').classList.remove('hidden');
+        document.getElementById('loggedInEmailDisplay').textContent = ADMIN_ACCOUNT.email;
+      } else {
+        document.getElementById('adminModalTitle').textContent = '관리자 인증';
+        document.getElementById('adminAuthTabs').classList.remove('hidden');
+        document.getElementById('adminLoggedInPanel').classList.add('hidden');
+        switchAdminTab('LOGIN');
+      }
+    }
+
+    function closeAdminModal() {
+      document.getElementById('adminModal').classList.add('hidden');
+    }
+
+    function switchAdminTab(tab) {
+      ['LOGIN', 'FIND_ID', 'RESET_PW'].forEach(key => {
+        const btn = document.getElementById(`tabAdmin${key}`);
+        if (key === tab) {
+          btn.className = 'py-2.5 text-indigo-600 border-b-2 border-indigo-600 bg-white';
+        } else {
+          btn.className = 'py-2.5 text-slate-500 hover:text-slate-800';
+        }
+      });
+
+      document.getElementById('formAdminLogin').classList.toggle('hidden', tab !== 'LOGIN');
+      document.getElementById('formFindId').classList.toggle('hidden', tab !== 'FIND_ID');
+      document.getElementById('formResetPw').classList.toggle('hidden', tab !== 'RESET_PW');
+      document.getElementById('loginErrorMsg').classList.add('hidden');
+      document.getElementById('resetErrorMsg').classList.add('hidden');
+    }
+
+    function submitAdminLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmailInput').value.trim();
+      const pw = document.getElementById('loginPasswordInput').value;
+      const errEl = document.getElementById('loginErrorMsg');
+
+      if (email === ADMIN_ACCOUNT.email && pw === ADMIN_ACCOUNT.password) {
+        state.isAdmin = true;
+        errEl.classList.add('hidden');
+        closeAdminModal();
+        renderApp();
+        showToast('관리자 계정으로 로그인되었습니다.', 'success');
+      } else {
+        errEl.textContent = '아이디 또는 비밀번호가 일치하지 않습니다.';
+        errEl.classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      state.isAdmin = false;
+      closeAdminModal();
+      renderApp();
+      showToast('관리자 로그아웃 되었습니다.');
+    }
+
+    function handleFindAdminId() {
+      const kw = document.getElementById('findIdKeyword').value.trim().toLowerCase();
+      const resBox = document.getElementById('findIdResultBox');
+      resBox.classList.remove('hidden');
+
+      if (!kw || kw.includes('홈앤쇼핑') || kw.includes('hns') || kw.includes('khojun')) {
+        resBox.innerHTML = `등록된 관리자 아이디: <strong class="font-mono underline">${ADMIN_ACCOUNT.email}</strong>`;
+      } else {
+        resBox.innerHTML = `입력하신 키워드와 일치하는 계정이 없습니다. (힌트: <strong>홈앤쇼핑</strong> 또는 <strong>hnsmall</strong>)`;
+      }
+    }
+
+    function sendVerificationCode() {
+      const email = document.getElementById('resetEmailInput').value.trim();
+      const errEl = document.getElementById('resetErrorMsg');
+
+      if (email !== ADMIN_ACCOUNT.email) {
+        errEl.textContent = '등록된 관리자 이메일 주소가 아닙니다.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      errEl.classList.add('hidden');
+      const code = String(Math.floor(100000 + Math.random() * 900000));
+      state.issuedResetCode = code;
+
+      document.getElementById('resetCodeSection').classList.remove('hidden');
+      document.getElementById('issuedCodeHint').innerHTML = `인증코드가 발급되었습니다: <strong class="font-mono text-sm">${code}</strong> (테스트용 즉시 표시)`;
+    }
+
+    function confirmPasswordReset() {
+      const inputCode = document.getElementById('verifyCodeInput').value.trim();
+      const newPw = document.getElementById('newPasswordInput').value;
+      const errEl = document.getElementById('resetErrorMsg');
+
+      if (!state.issuedResetCode || inputCode !== state.issuedResetCode) {
+        errEl.textContent = '인증코드가 올바르지 않습니다.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+      if (!newPw || newPw.length < 4) {
+        errEl.textContent = '새 비밀번호를 4자 이상 입력해 주세요.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      ADMIN_ACCOUNT.password = newPw;
+      state.issuedResetCode = null;
+      errEl.classList.add('hidden');
+      showToast('비밀번호가 성공적으로 재설정되었습니다. 새 비밀번호로 로그인해 주세요.', 'success');
+      switchAdminTab('LOGIN');
+      document.getElementById('loginEmailInput').value = ADMIN_ACCOUNT.email;
+      document.getElementById('loginPasswordInput').value = '';
+    }
+
+    function updateAdminUI() {
+      const addBtn = document.getElementById('btnAddSiteHeader');
+      const adminBanner = document.getElementById('adminBanner');
+      const adminBtn = document.getElementById('btnAdminAuth');
+      const adminLabel = document.getElementById('adminBtnLabel');
+
+      if (state.isAdmin) {
+        addBtn.classList.remove('hidden');
+        if (state.currentView === 'HOME') {
+          adminBanner.classList.remove('hidden');
+          adminBanner.classList.add('flex');
+        } else {
+          adminBanner.classList.add('hidden');
+        }
+        adminBtn.className = 'inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition';
+        adminLabel.textContent = '관리자 ON';
+      } else {
+        addBtn.classList.add('hidden');
+        adminBanner.classList.add('hidden');
+        adminBtn.className = 'inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 bg-white transition';
+        adminLabel.textContent = '관리자';
+      }
+    }
+
+    // 사이트 추가 모달
+    function openAddSiteModal() {
+      if (!state.isAdmin) {
+        showToast('사이트 추가는 관리자 로그인 후 이용 가능합니다.', 'error');
+        openAdminModal();
+        return;
+      }
+      document.getElementById('addSiteModal').classList.remove('hidden');
+    }
+
+    function closeAddSiteModal() {
+      document.getElementById('addSiteModal').classList.add('hidden');
+    }
+
+    function submitAddSite(e) {
+      e.preventDefault();
+      if (!state.isAdmin) return;
+
+      const name = document.getElementById('newSiteName').value.trim();
+      const slug = document.getElementById('newSiteSlug').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
+      const desc = document.getElementById('newSiteDesc').value.trim() || `${name} 모바일 앱 리뷰 스트림`;
+      const androidPkg = document.getElementById('newSiteAndroidPkg').value.trim() || `com.${slug}.app`;
+      const iosId = document.getElementById('newSiteIosId').value.trim() || 'id999999999';
+      const color = document.getElementById('newSiteColor').value;
+
+      const nextId = appsData.reduce((max, a) => Math.max(max, a.id), 0) + 1;
+      const shortCode = name.slice(0, 2).toUpperCase();
+
+      const newApp = {
+        id: nextId,
+        slug: slug || `app${nextId}`,
+        shortCode,
+        name,
+        subName: slug.toUpperCase(),
+        desc,
+        color,
+        androidPkg,
+        iosId
+      };
+
+      appsData.push(newApp);
+
+      // 신규 추가된 사이트용 초기 샘플 리뷰 6건 생성
+      const today = formatDateISO(new Date());
+      const sampleTexts = [
+        { os: 'Android', rating: 5, author: '신규유저1', content: `[${name}] 앱이 깔끔하고 상품 찾기가 정말 편리하네요!` },
+        { os: 'iOS', rating: 4, author: '신규유저2', content: `[${name}] 라이브 방송 화질이 선명하고 결제가 빠릅니다.` },
+        { os: 'Android', rating: 3, author: '신규유저3', content: `[${name}] 쿠폰함 위치가 조금 더 직관적이면 좋겠습니다.` },
+        { os: 'iOS', rating: 5, author: '신규유저4', content: `[${name}] 알림 혜택이 좋아서 자주 이용하고 있어요.` }
+      ];
+
+      sampleTexts.forEach((s, idx) => {
+        reviewsData.unshift({
+          id: Date.now() + idx,
+          appId: nextId,
+          os: s.os,
+          rating: s.rating,
+          author: s.author,
+          date: today,
+          version: '1.0.0',
+          content: s.content,
+          devReply: '',
+          teamStatus: '미확인',
+          teamMemo: ''
+        });
+      });
+
+      e.target.reset();
+      closeAddSiteModal();
+      renderApp();
+      showToast(`'${name}' 사이트가 성공적으로 추가되었습니다.`, 'success');
+    }
+
+    function deleteSite(e, appId) {
+      e.stopPropagation();
+      if (!state.isAdmin) return;
+      const target = appsData.find(a => a.id === appId);
+      if (!target) return;
+
+      appsData = appsData.filter(a => a.id !== appId);
+      reviewsData = reviewsData.filter(r => r.appId !== appId);
+
+      if (state.currentView === 'DETAIL' && state.currentAppId === appId) {
+        goHome();
+      } else {
+        renderApp();
+      }
+      showToast(`'${target.name}' 사이트가 삭제되었습니다.`);
+    }
+
+    // -----------------------------------------------------------------------
+    // 11. 설정 모달 제어
+    // -----------------------------------------------------------------------
+    function openSettingsModal() {
+      document.getElementById('settingPageSize').value = String(state.settings.pageSize);
+      document.getElementById('settingDefaultPeriod').value = state.settings.defaultPeriod;
+      document.getElementById('settingShowReply').checked = state.settings.showDevReply;
+      document.getElementById('settingHighlight').checked = state.settings.highlightKeyword;
+      document.getElementById('settingsModal').classList.remove('hidden');
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settingsModal').classList.add('hidden');
+    }
+
+    function saveDashboardSettings() {
+      state.settings.pageSize = parseInt(document.getElementById('settingPageSize').value, 10);
+      state.settings.defaultPeriod = document.getElementById('settingDefaultPeriod').value;
+      state.settings.showDevReply = document.getElementById('settingShowReply').checked;
+      state.settings.highlightKeyword = document.getElementById('settingHighlight').checked;
+
+      closeSettingsModal();
+      if (state.currentView === 'DETAIL') {
+        applyDatePreset(state.settings.defaultPeriod);
+      } else {
+        renderApp();
+      }
+      showToast('대시보드 설정이 저장되었습니다.', 'success');
+    }
+
+    // -----------------------------------------------------------------------
+    // 12. 초기화 실행
+    // -----------------------------------------------------------------------
+    // 12. 초기화 실행 및 실제 스토어 리뷰 수집 연동 (JSON + Apple RSS 실시간)
+    // -----------------------------------------------------------------------
+    async function loadSavedReviewsJson() {
+      try {
+        // GitHub Actions(scraper.py)가 생성한 reviews_data.json이 있으면 우선 로드 (Android + iOS 전체)
+        const res = await fetch(`./reviews_data.json?t=${Date.now()}`);
+        if (!res.ok) return false;
+        const json = await res.json();
+        if (Array.isArray(json.reviews) && json.reviews.length > 0) {
+          reviewsData = json.reviews;
+          return json.updatedAt || true;
+        }
+      } catch (e) {
+        // 정적 JSON 파일이 없는 경우 다음 단계(iOS 실시간 RSS)로 진행
+      }
+      return false;
+    }
+
+    async function fetchAppleAppStoreRSS(app) {
+      const numericId = String(app.iosId || '').replace(/^id/i, '').trim();
+      if (!numericId) return [];
+
+      const rssUrl = `https://itunes.apple.com/kr/rss/customerreviews/id=${numericId}/sortBy=mostRecent/json`;
+      // 브라우저 CORS 우회를 위한 공개 프록시 폴백 체인
+      const endpoints = [
+        `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
+        `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`
+      ];
+
+      for (const endpoint of endpoints) {
+        try {
+          const controller = new AbortController();
+          const timer = setTimeout(() => controller.abort(), 6000);
+          const res = await fetch(endpoint, { signal: controller.signal });
+          clearTimeout(timer);
+          if (!res.ok) continue;
+
+          const data = await res.json();
+          const entries = data?.feed?.entry || [];
+          const reviewEntries = Array.isArray(entries) ? entries.filter(e => e['im:rating']) : [];
+
+          return reviewEntries.map((entry, idx) => {
+            const rawDate = entry.updated?.label || new Date().toISOString();
+            const title = entry.title?.label || '';
+            const body = entry.content?.label || '';
+            return {
+              id: Number(`${app.id}9${idx}${String(entry.id?.label || idx).slice(-4)}`),
+              appId: app.id,
+              os: 'iOS',
+              rating: parseInt(entry['im:rating']?.label || '5', 10),
+              author: entry.author?.name?.label || 'App Store 사용자',
+              date: rawDate.slice(0, 10),
+              version: entry['im:version']?.label || '-',
+              content: title ? `[${title}] ${body}` : body,
+              devReply: '',
+              teamStatus: '미확인',
+              teamMemo: ''
+            };
+          });
+        } catch (err) {
+          // 다음 프록시로 재시도
+        }
+      }
+      return [];
+    }
+
+    async function syncRealStoreReviews(isManual = false) {
+      const syncIcon = document.getElementById('syncIcon');
+      const statusDot = document.getElementById('liveStatusDot');
+      const statusText = document.getElementById('liveStatusText');
+      const timeText = document.getElementById('lastSyncTimeText');
+
+      if (syncIcon) syncIcon.classList.add('fa-spin');
+      if (statusText) statusText.textContent = 'Google Play / Apple App Store 실제 리뷰 데이터를 동기화하는 중...';
+
+      // 1단계: 백엔드 자동수집기(scraper.py)가 생성한 reviews_data.json 확인
+      const jsonUpdated = await loadSavedReviewsJson();
+      if (jsonUpdated) {
+        if (syncIcon) syncIcon.classList.remove('fa-spin');
+        if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+        if (statusText) statusText.innerHTML = `<strong class="text-emerald-700">실제 스토어 수집 데이터(Android + iOS)</strong> 연동 완료 (총 ${reviewsData.length}건)`;
+        if (timeText) timeText.textContent = typeof jsonUpdated === 'string' ? `최종 수집: ${jsonUpdated}` : '';
+        renderApp();
+        if (isManual) showToast('Android & iOS 실제 스토어 리뷰 동기화가 완료되었습니다.', 'success');
+        return;
+      }
+
+      // 2단계: JSON 파일이 없을 경우 Apple App Store 공식 RSS 피드에서 실시간 수집
+      try {
+        const results = await Promise.all(appsData.map(app => fetchAppleAppStoreRSS(app)));
+        const liveIosReviews = results.flat();
+
+        if (liveIosReviews.length > 0) {
+          // 기존 샘플 데이터 중 iOS 항목을 실제 App Store 리뷰로 교체
+          const androidOnly = reviewsData.filter(r => r.os === 'Android');
+          reviewsData = [...liveIosReviews, ...androidOnly];
+
+          if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
+          if (statusText) {
+            statusText.innerHTML = `<strong class="text-emerald-700">Apple App Store(iOS) 실시간 리뷰 ${liveIosReviews.length}건</strong> 수집 완료 · Android는 자동수집기 연동 시 실시간 반영`;
+          }
+          if (timeText) timeText.textContent = `실시간 조회: ${new Date().toLocaleTimeString('ko-KR')}`;
+          renderApp();
+          if (isManual) showToast(`App Store 실제 리뷰 ${liveIosReviews.length}건을 실시간으로 불러왔습니다!`, 'success');
+        } else {
+          if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-amber-400';
+          if (statusText) statusText.textContent = '기본 샘플 데이터 표시 중 (네트워크/프록시 응답 지연 시 자동 전환)';
+          if (isManual) showToast('실시간 스토어 프록시 응답이 지연되어 기존 데이터를 유지합니다.', 'info');
+        }
+      } finally {
+        if (syncIcon) syncIcon.classList.remove('fa-spin');
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      generateInitialReviews();
+      parseHashRoute();
+      syncRealStoreReviews(false);
+    });
+  </script>
+</body>
+</html>
