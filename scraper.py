@@ -1,108 +1,124 @@
+import hashlib
 import json
+import sys
 import urllib.request
-from datetime import datetime
+from collections import defaultdict
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
+
 from google_play_scraper import Sort, reviews
 
-# 7대 홈쇼핑사 스토어 식별자 설정
-APPS = [
-    {"id": 1, "name": "GS홈쇼핑", "androidPkg": "gsshop.mobile.v2", "iosId": "417408265"},
-    {"id": 2, "name": "CJ오쇼핑", "androidPkg": "com.cjoshoping.cjmall", "iosId": "426243952"},
-    {"id": 3, "name": "현대홈쇼핑", "androidPkg": "com.hmallapp", "iosId": "446257206"},
-    {"id": 4, "name": "롯데홈쇼핑", "androidPkg": "com.lotte.lotteimall", "iosId": "438067397"},
-    {"id": 5, "name": "홈앤쇼핑", "androidPkg": "com.hnsmall", "iosId": "482441403"},
-    {"id": 6, "name": "NS홈쇼핑", "androidPkg": "com.nsmall", "iosId": "491234510"},
-    {"id": 7, "name": "공영홈쇼핑", "androidPkg": "kr.co.gongyoung.shop", "iosId": "1021234987"},
-]
+
+KST = timezone(timedelta(hours=9))
+APPS_FILE = Path('apps.json')
+OUTPUT_FILE = Path('reviews_data.json')
 
 
-def fetch_android_reviews(app, count=30):
-    """Google Play Store에서 최신 한국어 리뷰를 수집합니다."""
-    collected = []
-    try:
-        result, _ = reviews(
-            app["androidPkg"],
-            lang="ko",
-            country="kr",
-            sort=Sort.NEWEST,
-            count=count,
+def review_row(app, os, store_id, rating, author, date, version, content, reply=''):
+    key = f"{app['id']}:{os}:{store_id}".encode()
+    return {
+        'id': int(hashlib.sha256(key).hexdigest()[:12], 16),
+        'appId': app['id'],
+        'os': os,
+        'rating': int(rating),
+        'author': author,
+        'date': date,
+        'version': version,
+        'content': content,
+        'devReply': reply,
+        'teamStatus': '답변완료' if reply else '미확인',
+        'teamMemo': '',
+    }
+
+
+def fetch_android(app):
+    items, _ = reviews(
+        app['androidPkg'], lang='ko', country='kr', sort=Sort.NEWEST, count=30,
+    )
+    return [
+        review_row(
+            app, 'Android', item['reviewId'], item['score'],
+            item.get('userName') or 'Google Play 사용자',
+            item['at'].date().isoformat(),
+            item.get('reviewCreatedVersion') or '-', item.get('content') or '',
+            item.get('replyContent') or '',
         )
-        for idx, item in enumerate(result):
-            dt = item.get("at")
-            date_str = dt.strftime("%Y-%m-%d") if dt else datetime.now().strftime("%Y-%m-%d")
-            collected.append({
-                "id": int(f"{app['id']}1{idx:03d}"),
-                "appId": app["id"],
-                "os": "Android",
-                "rating": int(item.get("score", 5)),
-                "author": item.get("userName") or "Google Play 사용자",
-                "date": date_str,
-                "version": item.get("reviewCreatedVersion") or "-",
-                "content": item.get("content") or "",
-                "devReply": item.get("replyContent") or "",
-                "teamStatus": "답변완료" if item.get("replyContent") else "미확인",
-                "teamMemo": "",
-            })
-    except Exception as e:
-        print(f"[Android 수집 오류] {app['name']}: {e}")
-    return collected
+        for item in items
+    ]
 
 
-def fetch_ios_reviews(app):
-    """Apple App Store 공식 RSS 피드에서 최신 한국 리뷰를 수집합니다."""
-    collected = []
-    url = f"https://itunes.apple.com/kr/rss/customerreviews/id={app['iosId']}/sortBy=mostRecent/json"
-    try:
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=15) as response:
-            data = json.loads(response.read().decode("utf-8"))
-            entries = data.get("feed", {}).get("entry", [])
-            review_entries = [e for e in entries if "im:rating" in e]
+def fetch_ios(app):
+    url = (
+        'https://itunes.apple.com/kr/rss/customerreviews/'
+        f"id={app['iosId']}/sortBy=mostRecent/json"
+    )
+    request = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+    with urllib.request.urlopen(request, timeout=15) as response:
+        entries = json.load(response)['feed'].get('entry', [])
 
-            for idx, entry in enumerate(review_entries):
-                raw_date = entry.get("updated", {}).get("label", "")
-                title = entry.get("title", {}).get("label", "")
-                content = entry.get("content", {}).get("label", "")
-                full_text = f"[{title}] {content}" if title else content
-
-                collected.append({
-                    "id": int(f"{app['id']}2{idx:03d}"),
-                    "appId": app["id"],
-                    "os": "iOS",
-                    "rating": int(entry.get("im:rating", {}).get("label", 5)),
-                    "author": entry.get("author", {}).get("name", {}).get("label", "App Store 사용자"),
-                    "date": raw_date[:10] if raw_date else datetime.now().strftime("%Y-%m-%d"),
-                    "version": entry.get("im:version", {}).get("label", "-"),
-                    "content": full_text,
-                    "devReply": "",
-                    "teamStatus": "미확인",
-                    "teamMemo": "",
-                })
-    except Exception as e:
-        print(f"[iOS 수집 오류] {app['name']}: {e}")
-    return collected
+    rows = []
+    for item in entries:
+        if 'im:rating' not in item:
+            continue
+        title = item.get('title', {}).get('label', '')
+        content = item.get('content', {}).get('label', '')
+        rows.append(review_row(
+            app, 'iOS', item['id']['label'], item['im:rating']['label'],
+            item.get('author', {}).get('name', {}).get('label', 'App Store 사용자'),
+            item.get('updated', {}).get('label', '')[:10],
+            item.get('im:version', {}).get('label', '-'),
+            f'[{title}] {content}' if title else content,
+        ))
+    return rows
 
 
 def main():
-    all_reviews = []
-    for app in APPS:
-        print(f"수집 중: {app['name']}...")
-        all_reviews.extend(fetch_android_reviews(app, count=30))
-        all_reviews.extend(fetch_ios_reviews(app))
+    apps = json.loads(APPS_FILE.read_text(encoding='utf-8'))
+    app_ids = [app['id'] for app in apps]
+    if not apps or len(app_ids) != len(set(app_ids)):
+        raise ValueError('apps.json에 중복되지 않는 ID를 가진 앱을 하나 이상 등록해 주세요.')
 
-    # 최신순 정렬
-    all_reviews.sort(key=lambda x: x["date"], reverse=True)
+    previous = defaultdict(list)
+    old_apps = {}
+    if OUTPUT_FILE.exists():
+        old = json.loads(OUTPUT_FILE.read_text(encoding='utf-8'))
+        old_apps = {app['id']: app for app in old.get('apps', [])}
+        for row in old['reviews']:
+            previous[(row['appId'], row['os'])].append(row)
+
+    collected = {}
+    failures = []
+    fresh_count = 0
+    for app in apps:
+        for os, app_key, fetch in (
+            ('Android', 'androidPkg', fetch_android), ('iOS', 'iosId', fetch_ios),
+        ):
+            source = f"{app['name']} {os}"
+            try:
+                rows = fetch(app)
+                fresh_count += len(rows)
+                print(f'{source}: {len(rows)}건 수집', flush=True)
+            except Exception as error:
+                failures.append(source)
+                old_app = old_apps.get(app['id'], {})
+                rows = previous[(app['id'], os)] if old_app.get(app_key) == app[app_key] else []
+                print(f'::warning::{source} 수집 실패 ({type(error).__name__}): {error}', file=sys.stderr)
+            for row in rows:
+                collected[row['id']] = row
+
+    if not fresh_count:
+        raise RuntimeError('이번 실행에서 게시할 스토어 리뷰를 확인하지 못했습니다.')
 
     output = {
-        "updatedAt": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "totalCount": len(all_reviews),
-        "reviews": all_reviews,
+        'updatedAt': datetime.now(KST).strftime('%Y-%m-%d %H:%M:%S KST'),
+        'totalCount': len(collected),
+        'apps': apps,
+        'reviews': sorted(collected.values(), key=lambda row: row['date'], reverse=True),
+        'errors': failures,
     }
-
-    with open("reviews_data.json", "w", encoding="utf-8") as f:
-        json.dump(output, f, ensure_ascii=False, indent=2)
-
-    print(f"완료! 총 {len(all_reviews)}건의 실제 리뷰가 reviews_data.json에 저장되었습니다.")
+    OUTPUT_FILE.write_text(json.dumps(output, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    print(f"게시할 리뷰 {output['totalCount']}건")
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
