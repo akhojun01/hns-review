@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-25 22:06:03 KST",
+  "updatedAt": "2026-11-25 22:16:28 KST",
   "startDate": "2026-01-01",
-  "totalCount": 10117,
+  "totalCount": 10118,
   "apps": [
     {
       "id": 1,
@@ -16,12 +16,18 @@
       "storeListings": {
         "Android": {
           "title": "GS SHOP",
-          "rating": 4.7906804
+          "rating": 4.79064,
+          "minDownloads": 10000000,
+          "ratingCount": 597387,
+          "updatedOn": "2026-11-18"
         },
         "iOS": {
           "title": "GS SHOP",
           "subtitle": "당신의 가장 좋은 선택을 만듭니다.",
-          "rating": 4.8
+          "rating": 4.8,
+          "ratingCount": 189963,
+          "ratingCountLabel": "19만개의 평가",
+          "updatedOn": "2026-11-19"
         }
       }
     },
@@ -38,12 +44,18 @@
       "storeListings": {
         "Android": {
           "title": "CJ온스타일",
-          "rating": 4.7987237
+          "rating": 4.7987237,
+          "minDownloads": 10000000,
+          "ratingCount": 340728,
+          "updatedOn": "2026-11-19"
         },
         "iOS": {
           "title": "CJ온스타일",
           "subtitle": "취향공감 라이브쇼핑, CJ온스타일",
-          "rating": 4.8
+          "rating": 4.8,
+          "ratingCount": 87859,
+          "ratingCountLabel": "8.8만개의 평가",
+          "updatedOn": "2026-11-17"
         }
       }
     },
@@ -60,12 +72,18 @@
       "storeListings": {
         "Android": {
           "title": "현대홈쇼핑",
-          "rating": 4.68121
+          "rating": 4.6809397,
+          "minDownloads": 10000000,
+          "ratingCount": 99297,
+          "updatedOn": "2026-10-26"
         },
         "iOS": {
           "title": "현대홈쇼핑",
           "subtitle": "당신의 모든 취향을 읽다. 현대Hmall",
-          "rating": 4.5
+          "rating": 4.5,
+          "ratingCount": 20971,
+          "ratingCountLabel": "2.1만개의 평가",
+          "updatedOn": "2026-10-29"
         }
       }
     },
@@ -82,12 +100,18 @@
       "storeListings": {
         "Android": {
           "title": "롯데홈쇼핑",
-          "rating": 4.7440243
+          "rating": 4.7441163,
+          "minDownloads": 10000000,
+          "ratingCount": 257291,
+          "updatedOn": "2026-09-29"
         },
         "iOS": {
           "title": "롯데홈쇼핑",
           "subtitle": "새로운 일상의 시작",
-          "rating": 4.7
+          "rating": 4.7,
+          "ratingCount": 101594,
+          "ratingCountLabel": "10만개의 평가",
+          "updatedOn": "2026-10-01"
         }
       }
     },
@@ -104,12 +128,18 @@
       "storeListings": {
         "Android": {
           "title": "홈앤쇼핑 - 깐깐함이 찾은 정답, 홈앤쇼핑",
-          "rating": 4.4617376
+          "rating": 4.4617376,
+          "minDownloads": 10000000,
+          "ratingCount": 95780,
+          "updatedOn": "2026-11-18"
         },
         "iOS": {
           "title": "홈앤쇼핑",
           "subtitle": "깐깐함이 찾은 정답, 홈앤쇼핑",
-          "rating": 4.3
+          "rating": 4.3,
+          "ratingCount": 2665,
+          "ratingCountLabel": "2.7천개의 평가",
+          "updatedOn": "2026-11-19"
         }
       }
     },
@@ -126,12 +156,18 @@
       "storeListings": {
         "Android": {
           "title": "NS홈쇼핑",
-          "rating": 4.7575865
+          "rating": 4.757611,
+          "minDownloads": 10000000,
+          "ratingCount": 285589,
+          "updatedOn": "2026-11-16"
         },
         "iOS": {
           "title": "NS홈쇼핑",
           "subtitle": "쇼핑",
-          "rating": 4.7
+          "rating": 4.7,
+          "ratingCount": 67054,
+          "ratingCountLabel": "6.7만개의 평가",
+          "updatedOn": "2026-11-16"
         }
       }
     },
@@ -148,12 +184,18 @@
       "storeListings": {
         "Android": {
           "title": "공영쇼핑 - 공영홈쇼핑",
-          "rating": 3.9567757
+          "rating": 3.9567757,
+          "minDownloads": 5000000,
+          "ratingCount": 9076,
+          "updatedOn": "2026-09-22"
         },
         "iOS": {
           "title": "공영쇼핑 - 공영홈쇼핑",
           "subtitle": "쇼핑",
-          "rating": 4.3
+          "rating": 4.3,
+          "ratingCount": 1870,
+          "ratingCountLabel": "1.9천개의 평가",
+          "updatedOn": "2026-11-09"
         }
       }
     }
@@ -396,6 +438,18 @@
       "date": "2026-11-24",
       "version": "9.3.51",
       "content": "촉촉하니 이나이에도 빤질빤질좋아요 반은 며느리 쓰라고 보냈어요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 55524568839986,
+      "appId": 1,
+      "os": "Android",
+      "rating": 1,
+      "author": "현승훈",
+      "date": "2026-11-24",
+      "version": "9.3.51",
+      "content": "와 진짜 역겹게 만들었다",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -121568,7 +121622,7 @@
     {
       "appId": 1,
       "os": "Android",
-      "count": 3643,
+      "count": 3644,
       "earliestDate": "2026-01-01",
       "backfillOldestSeen": "2025-12-20",
       "backfillEnd": "cutoff",
