@@ -1,12 +1,14 @@
 import hashlib
 import json
+import re
 import sys
 import urllib.request
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
+from html import unescape
 from pathlib import Path
 
-from google_play_scraper import Sort, reviews
+from google_play_scraper import Sort, app as play_app, reviews
 
 
 KST = timezone(timedelta(hours=9))
@@ -28,7 +30,6 @@ def review_row(app, os, store_id, rating, author, date_str, version, content, re
         'content': content,
         'devReply': reply,
         'teamStatus': '답변완료' if reply else '미확인',
-        'teamMemo': '',
     }
 
 
@@ -139,6 +140,59 @@ def collect_source(app, os, pages, archive, previous_scan, now):
     }
 
 
+def google_listing(package):
+    listing = play_app(package, lang='ko', country='kr')
+    return {'title': listing.get('title') or '', 'rating': listing.get('score')}
+
+
+def apple_listing(app_id):
+    request = urllib.request.Request(
+        f'https://apps.apple.com/kr/app/id{app_id}',
+        headers={'User-Agent': 'Mozilla/5.0', 'Accept-Language': 'ko-KR,ko;q=0.9'},
+    )
+    with urllib.request.urlopen(request, timeout=12) as response:
+        page = response.read().decode('utf-8')
+
+    def page_text(pattern):
+        match = re.search(pattern, page, re.DOTALL | re.IGNORECASE)
+        return ' '.join(unescape(re.sub(r'<[^>]+>', '', match[1])).split()) if match else ''
+
+    title = page_text(r'<h1\b[^>]*>(.*?)</h1>')
+    subtitle = page_text(r'<p\b[^>]*class="[^"]*\bsubtitle\b[^"]*"[^>]*>(.*?)</p>')
+    rating = page_text(r'<div\b[^>]*data-testid="amp-rating__average-rating"[^>]*>(.*?)</div>')
+    if not title:
+        raise RuntimeError('App Store 상품 정보를 확인할 수 없습니다.')
+    if rating:
+        return {'title': title, 'subtitle': subtitle, 'rating': float(rating.replace(',', '.'))}
+
+    lookup = f'https://itunes.apple.com/lookup?id={app_id}&country=kr&entity=software'
+    with urllib.request.urlopen(lookup, timeout=12) as response:
+        results = json.load(response)['results']
+    result = next((item for item in results if str(item.get('trackId')) == str(app_id)), {})
+    return {'title': result.get('trackName') or title, 'subtitle': subtitle,
+            'rating': result.get('averageUserRating') or None}
+
+
+def read_store_listings(app, previous_app):
+    listings = {}
+    for os, key, get_listing in (
+        ('Android', 'androidPkg', google_listing), ('iOS', 'iosId', apple_listing),
+    ):
+        try:
+            listing = get_listing(app[key])
+            if not listing['title']:
+                raise RuntimeError('스토어 상품명을 확인할 수 없습니다.')
+            listings[os] = listing
+            print(f"{app['name']} {os} 스토어 평점: {listing.get('rating')}", flush=True)
+        except Exception as error:
+            if previous_app.get(key) == app[key]:
+                previous = previous_app.get('storeListings', {}).get(os)
+                if previous:
+                    listings[os] = previous
+            print(f"::warning::{app['name']} {os} 스토어 상품 정보 갱신 실패: {error}", file=sys.stderr)
+    return listings
+
+
 def main():
     apps = json.loads(APPS_FILE.read_text(encoding='utf-8'))
     app_ids = [app['id'] for app in apps]
@@ -151,6 +205,7 @@ def main():
     old_reviews = defaultdict(dict)
     for row in old.get('reviews', []):
         if row['date'] >= START_DATE:
+            row.pop('teamMemo', None)
             old_reviews[(row['appId'], row['os'])][row['id']] = row
 
     now = datetime.now(KST)
@@ -175,6 +230,9 @@ def main():
 
     if len(errors) == len(sources):
         raise RuntimeError('스토어 리뷰 수집에 실패해 마지막 게시 데이터를 유지합니다.')
+
+    for app in apps:
+        app['storeListings'] = read_store_listings(app, old_apps.get(app['id'], {}))
 
     output = {
         'updatedAt': now.strftime('%Y-%m-%d %H:%M:%S KST'),
