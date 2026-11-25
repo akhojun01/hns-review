@@ -179,9 +179,9 @@
             <div>
               <div class="flex flex-wrap items-center gap-2">
                 <span id="detailAppSlug" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">gsshop</span>
-                <h1 id="detailAppName" class="text-lg sm:text-2xl font-extrabold text-slate-900">GS홈쇼핑 (GS SHOP)</h1>
+                <h1 id="detailAppName" class="text-lg sm:text-2xl font-extrabold text-slate-900"></h1>
               </div>
-              <p id="detailAppDesc" class="text-xs sm:text-sm text-slate-500 mt-1">모바일 라이브 커머스 및 TV홈쇼핑 통합 앱 리뷰 스트림</p>
+              <p id="detailAppDesc" class="text-xs sm:text-sm text-slate-500 mt-1"></p>
             </div>
           </div>
 
@@ -325,7 +325,7 @@
   <footer class="bg-white border-t border-slate-200/80 py-5 mt-auto">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
       <div>REVIEW-SCRAPER · 홈쇼핑 모바일 앱(Android / iOS) 통합 리뷰 모니터링 대시보드</div>
-      <div>임시 메모·상태 변경은 이 화면에서만 유지됩니다.</div>
+      <div>상태 변경은 이 화면에서만 유지됩니다.</div>
     </div>
   </footer>
 
@@ -429,14 +429,24 @@
     // -----------------------------------------------------------------------
     // 3. 유틸리티 함수
     // -----------------------------------------------------------------------
-    function previousMonthRange(now = new Date()) {
+    function reviewMonthRange(offset, now = new Date()) {
       const korea = new Date(now.getTime() + 9 * 60 * 60 * 1000);
       const year = korea.getUTCFullYear();
-      const month = korea.getUTCMonth();
+      const month = korea.getUTCMonth() + offset;
       return {
-        start: new Date(Date.UTC(year, month - 1, 1)).toISOString().slice(0, 10),
-        end: new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10)
+        start: new Date(Date.UTC(year, month, 1)).toISOString().slice(0, 10),
+        end: new Date(Date.UTC(year, month + 1, 0)).toISOString().slice(0, 10)
       };
+    }
+
+    function storeSubtitle(app) {
+      const ios = app.storeListings?.iOS;
+      if (ios?.title && ios.subtitle) return ios.title + ' - ' + ios.subtitle;
+      return app.storeListings?.Android?.title || ios?.title || '';
+    }
+
+    function formatStoreRating(rating) {
+      return Number.isFinite(rating) && rating > 0 ? rating.toFixed(1) + ' ★' : '—';
     }
 
     function formatDateISO(dateObj) {
@@ -553,16 +563,23 @@
     // -----------------------------------------------------------------------
     function renderHomeGrid() {
       const grid = document.getElementById('appCardsGrid');
-      const { start, end } = previousMonthRange();
-      const monthlyReviews = reviewsData.filter(review => review.date >= start && review.date <= end);
-      const overall = appsData.length ? ' · 전체 ' + monthlyReviews.length.toLocaleString('ko-KR') + '건' : '';
-      document.getElementById('homePeriodSummary').textContent = '전월 조회기간 ' + start + ' ~ ' + end + overall;
+      const now = new Date();
+      const previousRange = reviewMonthRange(-1, now);
+      const currentRange = reviewMonthRange(0, now);
+      const previousReviews = reviewsData.filter(r => r.date >= previousRange.start && r.date <= previousRange.end);
+      const currentReviews = reviewsData.filter(r => r.date >= currentRange.start && r.date <= currentRange.end);
+      const previousMonth = Number(previousRange.start.slice(5, 7));
+      const currentMonth = Number(currentRange.start.slice(5, 7));
+      document.getElementById('homePeriodSummary').textContent = appsData.length
+        ? '전월(' + previousMonth + '월) ' + previousReviews.length.toLocaleString('ko-KR') + '건 · 당월(' + currentMonth + '월) ' + currentReviews.length.toLocaleString('ko-KR') + '건'
+        : '';
       const kw = (document.getElementById('homeAppSearch')?.value || '').trim().toLowerCase();
 
       const filteredApps = appsData.filter(app =>
         app.name.toLowerCase().includes(kw) ||
         app.subName.toLowerCase().includes(kw) ||
-        app.slug.toLowerCase().includes(kw)
+        app.slug.toLowerCase().includes(kw) ||
+        storeSubtitle(app).toLowerCase().includes(kw)
       );
 
       document.getElementById('totalAppCountBadge').textContent = `${appsData.length}개`;
@@ -577,20 +594,10 @@
       }
 
       grid.innerHTML = filteredApps.map(app => {
-        const appReviews = monthlyReviews.filter(r => r.appId === app.id);
-        const androidReviews = appReviews.filter(r => r.os === 'Android');
-        const iosReviews = appReviews.filter(r => r.os === 'iOS');
-
-        const avgAll = appReviews.length
-          ? (appReviews.reduce((acc, r) => acc + r.rating, 0) / appReviews.length).toFixed(1)
-          : '-';
-        const avgAndroid = androidReviews.length
-          ? (androidReviews.reduce((acc, r) => acc + r.rating, 0) / androidReviews.length).toFixed(1)
-          : '-';
-        const avgIos = iosReviews.length
-          ? (iosReviews.reduce((acc, r) => acc + r.rating, 0) / iosReviews.length).toFixed(1)
-          : '-';
-
+        const previousCount = previousReviews.filter(review => review.appId === app.id).length;
+        const currentCount = currentReviews.filter(review => review.appId === app.id).length;
+        const androidRating = formatStoreRating(app.storeListings?.Android?.rating);
+        const iosRating = formatStoreRating(app.storeListings?.iOS?.rating);
 
         return `
           <div onclick="navigateToApp(${app.id}, 1)"
@@ -610,27 +617,23 @@
               </div>
 
               <p class="text-xs text-slate-500 line-clamp-2 mb-4 min-h-[32px]">
-                ${escapeHtml(app.desc)}
+                ${escapeHtml(storeSubtitle(app))}
               </p>
             </div>
 
             <div class="pt-3 border-t border-slate-100 space-y-2.5">
-              <div class="flex items-center justify-between text-xs">
-                <span class="font-semibold text-slate-700 flex items-center gap-1">
-                  <i class="fa-solid fa-star text-amber-400"></i> 평균 ${avgAll}
-                </span>
-                <span class="font-semibold text-slate-700">전월 리뷰 ${appReviews.length.toLocaleString('ko-KR')}건</span>
-              </div>
-
+              <div class="text-[11px] font-semibold text-slate-500">현재 스토어 평점</div>
               <div class="grid grid-cols-2 gap-1.5 text-[11px]">
-                <div class="px-2 py-1 rounded bg-slate-50 border border-slate-100 flex items-center justify-between">
-                  <span class="text-emerald-700 font-medium"><i class="fa-brands fa-android mr-1"></i>AOS</span>
-                  <span class="font-bold text-slate-700">${avgAndroid}</span>
+                <div class="flex items-center justify-between gap-1 rounded border border-emerald-100 bg-emerald-50 px-2 py-1.5 text-emerald-800">
+                  <span>Google Play</span><strong>${androidRating}</strong>
                 </div>
-                <div class="px-2 py-1 rounded bg-slate-50 border border-slate-100 flex items-center justify-between">
-                  <span class="text-slate-700 font-medium"><i class="fa-brands fa-apple mr-1"></i>iOS</span>
-                  <span class="font-bold text-slate-700">${avgIos}</span>
+                <div class="flex items-center justify-between gap-1 rounded border border-sky-100 bg-sky-50 px-2 py-1.5 text-sky-800">
+                  <span>App Store</span><strong>${iosRating}</strong>
                 </div>
+              </div>
+              <div class="flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-600">
+                <span>전월 리뷰 <strong class="text-slate-800">${previousCount.toLocaleString('ko-KR')}건</strong></span>
+                <span>당월 리뷰 <strong class="text-slate-800">${currentCount.toLocaleString('ko-KR')}건</strong></span>
               </div>
             </div>
           </div>
@@ -672,8 +675,7 @@
         const kw = state.searchQuery.trim().toLowerCase();
         list = list.filter(r =>
           r.content.toLowerCase().includes(kw) ||
-          r.author.toLowerCase().includes(kw) ||
-          (r.teamMemo && r.teamMemo.toLowerCase().includes(kw))
+          r.author.toLowerCase().includes(kw)
         );
       }
 
@@ -715,8 +717,8 @@
       iconEl.textContent = app.shortCode;
 
       document.getElementById('detailAppSlug').textContent = app.slug;
-      document.getElementById('detailAppName').textContent = `${app.name} (${app.subName})`;
-      document.getElementById('detailAppDesc').textContent = app.desc;
+      document.getElementById('detailAppName').textContent = app.name;
+      document.getElementById('detailAppDesc').textContent = storeSubtitle(app);
 
       // OS별 평점 요약
       const allAppReviews = reviewsData.filter(r => r.appId === app.id &&
@@ -812,17 +814,6 @@
               <p class="leading-relaxed">${escapeHtml(rev.devReply)}</p>
             </div>
           ` : ''}
-
-          <!-- 팀 내부 공유 메모 영역 -->
-          <div class="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center gap-2">
-            <span class="text-[11px] font-semibold text-indigo-600 shrink-0 flex items-center gap-1">
-              <i class="fa-regular fa-comment-dots"></i> 임시 메모:
-            </span>
-            <input type="text" value="${escapeHtml(rev.teamMemo || '')}"
-              onchange="updateReviewMemo(${rev.id}, this.value)"
-              placeholder="이 화면에서 참고할 메모를 입력하세요."
-              class="flex-1 text-xs px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 focus:bg-white focus:border-indigo-400 focus:outline-none text-slate-700" />
-          </div>
         </article>
       `;
     }
@@ -938,7 +929,7 @@
       let startStr = '';
 
       if (preset === 'PREVIOUS_MONTH') {
-        const previous = previousMonthRange(now);
+        const previous = reviewMonthRange(-1, now);
         startStr = previous.start;
         endStr = previous.end;
       } else if (preset === '7D') {
@@ -1014,14 +1005,6 @@
       }
     }
 
-    function updateReviewMemo(reviewId, memoText) {
-      const target = reviewsData.find(r => r.id === reviewId);
-      if (target) {
-        target.teamMemo = memoText.trim();
-        showToast('이 화면에 임시 메모를 반영했습니다.', 'success');
-      }
-    }
-
     // -----------------------------------------------------------------------
     // 9. 엑셀(.xlsx) 다운로드 기능 (SheetJS)
     // -----------------------------------------------------------------------
@@ -1044,8 +1027,7 @@
         '앱버전': r.version,
         '리뷰내용': r.content,
         '스토어답변': r.devReply || '',
-        '팀대응상태': r.teamStatus,
-        '임시메모': r.teamMemo || ''
+        '팀대응상태': r.teamStatus
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -1070,8 +1052,7 @@
           '앱버전': r.version,
           '리뷰내용': r.content,
           '스토어답변': r.devReply || '',
-          '팀대응상태': r.teamStatus,
-          '임시메모': r.teamMemo || ''
+          '팀대응상태': r.teamStatus
         };
       });
 
@@ -1135,7 +1116,7 @@
         appsData = data.apps;
         reviewsData = data.reviews.map(review => {
           const prior = previous.get(review.id);
-          return prior ? { ...review, teamStatus: prior.teamStatus, teamMemo: prior.teamMemo } : review;
+          return prior ? { ...review, teamStatus: prior.teamStatus } : review;
         });
         const failed = data.errors || [];
         dot.className = 'w-2 h-2 rounded-full ' + (failed.length ? 'bg-amber-400' : 'bg-emerald-500');
