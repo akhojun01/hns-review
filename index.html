@@ -213,6 +213,7 @@
             </button>
           </div>
         </div>
+        <div id="detailStoreInfo" class="mt-4 border-t border-slate-100 pt-3"></div>
       </div>
 
       <!-- 필터 & 기간 선택 컨트롤 패널 -->
@@ -292,7 +293,8 @@
       <div class="flex items-center justify-between text-xs sm:text-sm text-slate-600 px-1">
         <div>
           검색 결과 <strong id="filteredCountText" class="text-slate-900">0</strong>건
-          <span id="activePeriodBadge" class="ml-2 text-xs text-slate-400"></span>
+          <span id="activePeriodBadge" class="ml-2 text-xs text-slate-500"></span>
+          <span id="archiveScopeBadge" class="ml-2 text-xs text-slate-500"></span>
         </div>
         <div class="flex items-center gap-2">
           <label for="sortOrderSelect" class="text-xs text-slate-500">정렬:</label>
@@ -425,6 +427,7 @@
 
     let appsData = [];
     let reviewsData = [];
+    let reviewArchiveStart = '';
 
     // -----------------------------------------------------------------------
     // 3. 유틸리티 함수
@@ -447,6 +450,34 @@
 
     function formatStoreRating(rating) {
       return Number.isFinite(rating) && rating > 0 ? rating.toFixed(1) + ' ★' : '—';
+    }
+
+    function downloadThreshold(count) {
+      if (!Number.isFinite(count) || count <= 0) return '—';
+      if (count >= 10000 && count % 10000 === 0) return (count / 10000).toLocaleString('ko-KR') + '만 회 이상';
+      return count.toLocaleString('ko-KR') + '회 이상';
+    }
+
+    function storeRatingCount(listing) {
+      if (Number.isFinite(listing?.ratingCount)) return listing.ratingCount.toLocaleString('ko-KR') + '건';
+      const publicCount = listing?.ratingCountLabel?.match(/^[\d.,]+\s*[천만억]?/)?.[0]?.trim();
+      return publicCount ? publicCount + '건' : '—';
+    }
+
+    function renderStoreInfo(app, includeRatingCounts = false) {
+      const google = app.storeListings?.Android;
+      const apple = app.storeListings?.iOS;
+      const rows = [
+        ['Google Play 다운로드', downloadThreshold(google?.minDownloads)],
+        ['Google Play 업데이트', google?.updatedOn || '—'],
+        ['App Store 업데이트', apple?.updatedOn || '—']
+      ];
+      if (includeRatingCounts) {
+        rows.push(['Google Play 누적 평가', storeRatingCount(google)], ['App Store 누적 평가', storeRatingCount(apple)]);
+      }
+      return `<dl class="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-1.5 text-[11px] text-slate-600">
+        ${rows.map(([label, value]) => `<dt>${label}</dt><dd class="text-right font-semibold tabular-nums text-slate-800">${escapeHtml(value)}</dd>`).join('')}
+      </dl>`;
     }
 
     function formatDateISO(dateObj) {
@@ -631,7 +662,8 @@
                   <span>App Store</span><strong>${iosRating}</strong>
                 </div>
               </div>
-              <div class="flex flex-wrap items-center justify-between gap-1 text-[11px] text-slate-600">
+              ${renderStoreInfo(app)}
+              <div class="flex flex-wrap items-center justify-between gap-1 border-t border-slate-100 pt-2 text-[11px] text-slate-600">
                 <span>전월 리뷰 <strong class="text-slate-800">${previousCount.toLocaleString('ko-KR')}건</strong></span>
                 <span>당월 리뷰 <strong class="text-slate-800">${currentCount.toLocaleString('ko-KR')}건</strong></span>
               </div>
@@ -719,6 +751,7 @@
       document.getElementById('detailAppSlug').textContent = app.slug;
       document.getElementById('detailAppName').textContent = app.name;
       document.getElementById('detailAppDesc').textContent = storeSubtitle(app);
+      document.getElementById('detailStoreInfo').innerHTML = renderStoreInfo(app, true);
 
       // OS별 평점 요약
       const allAppReviews = reviewsData.filter(r => r.appId === app.id &&
@@ -742,6 +775,7 @@
       const pageItems = filtered.slice(startIdx, startIdx + pageSize);
 
       document.getElementById('filteredCountText').textContent = filtered.length;
+      document.getElementById('archiveScopeBadge').textContent = reviewArchiveStart ? reviewArchiveStart + '부터 수집' : '';
       const periodBadge = document.getElementById('activePeriodBadge');
       if (state.startDate || state.endDate) {
         periodBadge.textContent = `(${state.startDate || '처음'} ~ ${state.endDate || '현재'})`;
@@ -1114,6 +1148,7 @@
         }
         const previous = new Map(reviewsData.map(review => [review.id, review]));
         appsData = data.apps;
+        reviewArchiveStart = data.startDate || '';
         reviewsData = data.reviews.map(review => {
           const prior = previous.get(review.id);
           return prior ? { ...review, teamStatus: prior.teamStatus } : review;
