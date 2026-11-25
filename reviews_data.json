@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-25 22:27:02 KST",
+  "updatedAt": "2026-11-25 22:28:45 KST",
   "startDate": "2025-01-01",
   "totalCount": 23062,
   "apps": [
@@ -72,7 +72,7 @@
       "storeListings": {
         "Android": {
           "title": "현대홈쇼핑",
-          "rating": 4.68121,
+          "rating": 4.6809397,
           "minDownloads": 10000000,
           "ratingCount": 99297,
           "updatedOn": "2026-10-26"
@@ -165,7 +165,7 @@
           "title": "NS홈쇼핑",
           "subtitle": "쇼핑",
           "rating": 4.7,
-          "ratingCount": 67049,
+          "ratingCount": 67054,
           "ratingCountLabel": "6.7만개의 평가",
           "updatedOn": "2026-11-16"
         }
@@ -276965,7 +276965,7 @@
       "backfillOldestSeen": "2025-10-11",
       "backfillEnd": "page_limit",
       "lastSuccess": "2026-11-25",
-      "status": "page_limit"
+      "status": "cutoff"
     },
     {
       "appId": 2,
