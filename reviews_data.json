@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-25 22:16:28 KST",
+  "updatedAt": "2026-11-25 22:17:50 KST",
   "startDate": "2026-01-01",
   "totalCount": 10118,
   "apps": [
@@ -25,7 +25,7 @@
           "title": "GS SHOP",
           "subtitle": "당신의 가장 좋은 선택을 만듭니다.",
           "rating": 4.8,
-          "ratingCount": 189963,
+          "ratingCount": 189992,
           "ratingCountLabel": "19만개의 평가",
           "updatedOn": "2026-11-19"
         }
@@ -53,7 +53,7 @@
           "title": "CJ온스타일",
           "subtitle": "취향공감 라이브쇼핑, CJ온스타일",
           "rating": 4.8,
-          "ratingCount": 87859,
+          "ratingCount": 87866,
           "ratingCountLabel": "8.8만개의 평가",
           "updatedOn": "2026-11-17"
         }
@@ -81,7 +81,7 @@
           "title": "현대홈쇼핑",
           "subtitle": "당신의 모든 취향을 읽다. 현대Hmall",
           "rating": 4.5,
-          "ratingCount": 20971,
+          "ratingCount": 20994,
           "ratingCountLabel": "2.1만개의 평가",
           "updatedOn": "2026-10-29"
         }
