@@ -103,9 +103,7 @@
             모니터링 대상 모바일 앱
             <span id="totalAppCountBadge" class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">7개</span>
           </h1>
-          <p class="text-xs sm:text-sm text-slate-500 mt-1">
-            각 홈쇼핑사 카드를 선택하면 Android(Google Play) 및 iOS(App Store) 최신 리뷰를 상세 조회할 수 있습니다.
-          </p>
+          <p id="homePeriodSummary" class="text-xs sm:text-sm text-slate-600 mt-1"></p>
         </div>
 
         <div class="flex items-center gap-2 w-full sm:w-auto">
@@ -173,7 +171,6 @@
               <div class="flex flex-wrap items-center gap-2">
                 <span id="detailAppSlug" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">gsshop</span>
                 <h1 id="detailAppName" class="text-lg sm:text-2xl font-extrabold text-slate-900">GS홈쇼핑 (GS SHOP)</h1>
-                <span id="detailRouteBadge" class="text-[11px] font-mono text-slate-400">#/1/1</span>
               </div>
               <p id="detailAppDesc" class="text-xs sm:text-sm text-slate-500 mt-1">모바일 라이브 커머스 및 TV홈쇼핑 통합 앱 리뷰 스트림</p>
             </div>
@@ -262,7 +259,8 @@
         <div class="pt-3 border-t border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-xs font-semibold text-slate-500 mr-1"><i class="fa-regular fa-calendar mr-1"></i>조회 기간:</span>
-            <button onclick="applyDatePreset('ALL')" data-preset="ALL" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white">전체기간</button>
+            <button onclick="applyDatePreset('PREVIOUS_MONTH')" data-preset="PREVIOUS_MONTH" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-semibold bg-slate-900 text-white">전월</button>
+          <button onclick="applyDatePreset('ALL')" data-preset="ALL" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">전체기간</button>
             <button onclick="applyDatePreset('7D')" data-preset="7D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 7일</button>
             <button onclick="applyDatePreset('30D')" data-preset="30D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 30일</button>
             <button onclick="applyDatePreset('90D')" data-preset="90D" class="date-preset-btn px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 hover:bg-slate-200">최근 3개월</button>
@@ -351,6 +349,7 @@
         <div>
           <label class="block text-xs font-semibold text-slate-700 mb-1">기본 조회 기간 설정</label>
           <select id="settingDefaultPeriod" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-sm">
+            <option value="PREVIOUS_MONTH" selected>전월 1일~말일</option>
             <option value="ALL">전체 기간</option>
             <option value="7D">최근 7일</option>
             <option value="30D">최근 30일</option>
@@ -405,11 +404,11 @@
       searchQuery: '',
       startDate: '',
       endDate: '',
-      datePreset: 'ALL',
+      datePreset: 'PREVIOUS_MONTH',
       sortOrder: 'NEWEST',
       settings: {
         pageSize: 10,
-        defaultPeriod: 'ALL',
+        defaultPeriod: 'PREVIOUS_MONTH',
         showDevReply: true,
         highlightKeyword: true
       }
@@ -421,6 +420,16 @@
     // -----------------------------------------------------------------------
     // 3. 유틸리티 함수
     // -----------------------------------------------------------------------
+    function previousMonthRange(now = new Date()) {
+      const korea = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+      const year = korea.getUTCFullYear();
+      const month = korea.getUTCMonth();
+      return {
+        start: new Date(Date.UTC(year, month - 1, 1)).toISOString().slice(0, 10),
+        end: new Date(Date.UTC(year, month, 0)).toISOString().slice(0, 10)
+      };
+    }
+
     function formatDateISO(dateObj) {
       const y = dateObj.getFullYear();
       const m = String(dateObj.getMonth() + 1).padStart(2, '0');
@@ -535,6 +544,10 @@
     // -----------------------------------------------------------------------
     function renderHomeGrid() {
       const grid = document.getElementById('appCardsGrid');
+      const { start, end } = previousMonthRange();
+      const monthlyReviews = reviewsData.filter(review => review.date >= start && review.date <= end);
+      const overall = appsData.length ? ' · 전체 ' + monthlyReviews.length.toLocaleString('ko-KR') + '건' : '';
+      document.getElementById('homePeriodSummary').textContent = '전월 조회기간 ' + start + ' ~ ' + end + overall;
       const kw = (document.getElementById('homeAppSearch')?.value || '').trim().toLowerCase();
 
       const filteredApps = appsData.filter(app =>
@@ -555,13 +568,13 @@
       }
 
       grid.innerHTML = filteredApps.map(app => {
-        const appReviews = reviewsData.filter(r => r.appId === app.id);
+        const appReviews = monthlyReviews.filter(r => r.appId === app.id);
         const androidReviews = appReviews.filter(r => r.os === 'Android');
         const iosReviews = appReviews.filter(r => r.os === 'iOS');
 
         const avgAll = appReviews.length
           ? (appReviews.reduce((acc, r) => acc + r.rating, 0) / appReviews.length).toFixed(1)
-          : '0.0';
+          : '-';
         const avgAndroid = androidReviews.length
           ? (androidReviews.reduce((acc, r) => acc + r.rating, 0) / androidReviews.length).toFixed(1)
           : '-';
@@ -569,7 +582,6 @@
           ? (iosReviews.reduce((acc, r) => acc + r.rating, 0) / iosReviews.length).toFixed(1)
           : '-';
 
-        const unconfirmedCount = appReviews.filter(r => r.teamStatus === '미확인').length;
 
         return `
           <div onclick="navigateToApp(${app.id}, 1)"
@@ -598,7 +610,7 @@
                 <span class="font-semibold text-slate-700 flex items-center gap-1">
                   <i class="fa-solid fa-star text-amber-400"></i> 평균 ${avgAll}
                 </span>
-                <span class="text-slate-400">총 ${appReviews.length}건</span>
+                <span class="font-semibold text-slate-700">전월 리뷰 ${appReviews.length.toLocaleString('ko-KR')}건</span>
               </div>
 
               <div class="grid grid-cols-2 gap-1.5 text-[11px]">
@@ -610,14 +622,6 @@
                   <span class="text-slate-700 font-medium"><i class="fa-brands fa-apple mr-1"></i>iOS</span>
                   <span class="font-bold text-slate-700">${avgIos}</span>
                 </div>
-              </div>
-
-              <div class="flex items-center justify-between text-[11px] pt-0.5">
-                <span class="text-slate-400 font-mono">#/${app.id}/1</span>
-                ${unconfirmedCount > 0
-                  ? `<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-200/70">미확인 ${unconfirmedCount}건</span>`
-                  : `<span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold">모두 확인됨</span>`
-                }
               </div>
             </div>
           </div>
@@ -707,16 +711,16 @@
 
       document.getElementById('detailAppSlug').textContent = app.slug;
       document.getElementById('detailAppName').textContent = `${app.name} (${app.subName})`;
-      document.getElementById('detailRouteBadge').textContent = `#/${app.id}/${state.currentPage}`;
       document.getElementById('detailAppDesc').textContent = app.desc;
 
       // OS별 평점 요약
-      const allAppReviews = reviewsData.filter(r => r.appId === app.id);
+      const allAppReviews = reviewsData.filter(r => r.appId === app.id &&
+        (!state.startDate || r.date >= state.startDate) && (!state.endDate || r.date <= state.endDate));
       const aosList = allAppReviews.filter(r => r.os === 'Android');
       const iosList = allAppReviews.filter(r => r.os === 'iOS');
 
-      const aosAvg = aosList.length ? (aosList.reduce((s, r) => s + r.rating, 0) / aosList.length).toFixed(1) : '0.0';
-      const iosAvg = iosList.length ? (iosList.reduce((s, r) => s + r.rating, 0) / iosList.length).toFixed(1) : '0.0';
+      const aosAvg = aosList.length ? (aosList.reduce((s, r) => s + r.rating, 0) / aosList.length).toFixed(1) : '-';
+      const iosAvg = iosList.length ? (iosList.reduce((s, r) => s + r.rating, 0) / iosList.length).toFixed(1) : '-';
 
       document.getElementById('detailAndroidScore').textContent = `${aosAvg} ★ (${aosList.length}건)`;
       document.getElementById('detailIosScore').textContent = `${iosAvg} ★ (${iosList.length}건)`;
@@ -889,13 +893,17 @@
       renderDetailView();
     }
 
-    function applyDatePreset(preset) {
+    function setDatePreset(preset) {
       state.datePreset = preset;
       const now = new Date();
-      const endStr = formatDateISO(now);
+      let endStr = formatDateISO(now);
       let startStr = '';
 
-      if (preset === '7D') {
+      if (preset === 'PREVIOUS_MONTH') {
+        const previous = previousMonthRange(now);
+        startStr = previous.start;
+        endStr = previous.end;
+      } else if (preset === '7D') {
         const d = new Date(now);
         d.setDate(now.getDate() - 7);
         startStr = formatDateISO(d);
@@ -923,6 +931,10 @@
         }
       });
 
+    }
+
+    function applyDatePreset(preset) {
+      setDatePreset(preset);
       state.currentPage = 1;
       renderDetailView();
     }
@@ -953,7 +965,7 @@
       document.getElementById('sortOrderSelect').value = 'NEWEST';
 
       setOsFilter('ALL');
-      applyDatePreset('ALL');
+      applyDatePreset(state.settings.defaultPeriod);
       showToast('필터 및 조회 기간이 초기화되었습니다.');
     }
 
@@ -1059,6 +1071,7 @@
       if (state.currentView === 'DETAIL') {
         applyDatePreset(state.settings.defaultPeriod);
       } else {
+        setDatePreset(state.settings.defaultPeriod);
         renderApp();
       }
       showToast('대시보드 설정이 저장되었습니다.', 'success');
@@ -1089,7 +1102,7 @@
         });
         const failed = data.errors || [];
         dot.className = 'w-2 h-2 rounded-full ' + (failed.length ? 'bg-amber-400' : 'bg-emerald-500');
-        status.textContent = '스토어 리뷰 ' + reviewsData.length.toLocaleString('ko-KR') + '건';
+        status.textContent = '누적 리뷰 ' + reviewsData.length.toLocaleString('ko-KR') + '건';
         if (failed.length) status.textContent += ' · 이번 수집 실패: ' + failed.join(', ');
         time.textContent = data.updatedAt ? '최종 수집: ' + data.updatedAt : '';
         parseHashRoute();
@@ -1105,6 +1118,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
+      setDatePreset(state.settings.defaultPeriod);
       parseHashRoute();
       syncRealStoreReviews();
     });
