@@ -1,0 +1,36 @@
+name: Scrape Store Reviews
+
+on:
+schedule:
+# 매일 한국시간 오전 9시, 오후 2시, 오후 6시 자동 실행 (UTC 00:00, 05:00, 09:00)
+- cron: '0 0,5,9 * * *'
+workflow_dispatch: # GitHub Actions 탭에서 수동 즉시 실행 가능
+
+permissions:
+contents: write
+
+jobs:
+scrape:
+runs-on: ubuntu-latest
+steps:
+- name: 저장소 코드 체크아웃
+uses: actions/checkout@v4
+
+  - name: Python 환경 설정
+    uses: actions/setup-python@v5
+    with:
+      python-version: '3.11'
+
+  - name: google-play-scraper 설치
+    run: pip install google-play-scraper
+
+  - name: 실제 스토어 리뷰 수집 실행
+    run: python scraper.py
+
+  - name: 수집된 reviews_data.json 자동 커밋
+    run: |
+      git config --local user.email "action@github.com"
+      git config --local user.name "Review Scraper Bot"
+      git add reviews_data.json
+      git diff --quiet && git diff --staged --quiet || git commit -m "chore: update real store reviews"
+      git push
