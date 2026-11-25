@@ -48,13 +48,6 @@
       background: #f1f5f9;
       border-color: #64748b;
     }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
   </style>
 </head>
 <body class="min-h-screen flex flex-col font-sans antialiased selection:bg-slate-900 selection:text-white">
@@ -155,18 +148,14 @@
     <!-- =================================================================== -->
     <section id="detailView" class="hidden space-y-5">
 
-      <!-- 상단 빠른 앱 전환 탭 바 -->
-      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-        <button onclick="goHome(event)"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-slate-700 border border-slate-200 hover:bg-slate-100 shrink-0 transition">
-          <i class="fa-solid fa-grid-2"></i>
+      <nav aria-label="홈쇼핑 선택" class="grid grid-cols-4 gap-1 sm:flex sm:flex-wrap sm:gap-1.5">
+        <button type="button" onclick="goHome(event)"
+          class="inline-flex min-w-0 items-center justify-center gap-1 rounded-md border border-slate-200 bg-white px-1 py-2 text-xs font-semibold leading-tight text-slate-700 hover:bg-slate-100 sm:px-3">
+          <i class="fa-solid fa-grid-2 hidden sm:inline" aria-hidden="true"></i>
           <span>전체 목록</span>
         </button>
-        <div class="h-4 w-px bg-slate-300 shrink-0"></div>
-        <div id="quickAppTabs" class="flex items-center gap-1.5">
-          <!-- JS 동적 탭 -->
-        </div>
-      </div>
+        <div id="quickAppTabs" class="contents"></div>
+      </nav>
 
       <!-- 앱 헤더 & 통합 평점 요약 카드 -->
       <div class="bg-white rounded-xl border border-slate-200/90 p-4 sm:p-6 shadow-sm">
@@ -179,7 +168,7 @@
             <div>
               <div class="flex flex-wrap items-center gap-2">
                 <span id="detailAppSlug" class="text-xs font-mono font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">gsshop</span>
-                <h1 id="detailAppName" class="text-lg sm:text-2xl font-extrabold text-slate-900"></h1>
+                <h1 id="detailAppName" tabindex="-1" class="text-lg sm:text-2xl font-extrabold text-slate-900 focus:outline-none"></h1>
               </div>
               <p id="detailAppDesc" class="text-xs sm:text-sm text-slate-500 mt-1"></p>
             </div>
@@ -295,15 +284,13 @@
         </div>
       </div>
 
-      <!-- 리뷰 리스트 영역 -->
-      <div id="reviewsListContainer" class="space-y-3">
-        <!-- JS 동적 렌더링 -->
+      <nav id="paginationContainer" aria-label="리뷰 페이지" class="empty:hidden flex flex-wrap items-center justify-center gap-1.5"></nav>
+      <div id="reviewsListContainer" class="space-y-3"></div>
+      <div id="moreReviewsRow" hidden class="text-center">
+        <button type="button" onclick="appendReviewBatch()"
+          class="rounded-lg border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100">리뷰 더 보기</button>
       </div>
-
-      <!-- 페이지네이션 -->
-      <div id="paginationContainer" class="flex flex-wrap items-center justify-center gap-1.5 pt-3 pb-6">
-        <!-- JS 동적 렌더링 -->
-      </div>
+      <p id="reviewLoadStatus" class="sr-only" role="status"></p>
     </section>
 
   </main>
@@ -349,12 +336,13 @@
 
       <div class="p-5 space-y-4 text-sm">
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">페이지당 표시할 리뷰 수</label>
+          <label for="settingPageSize" class="block text-xs font-semibold text-slate-700 mb-1">한 번에 표시할 리뷰 수</label>
           <select id="settingPageSize" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-white text-sm">
             <option value="5">5개씩 보기</option>
-            <option value="10" selected>10개씩 보기</option>
+            <option value="10">10개씩 보기</option>
             <option value="20">20개씩 보기</option>
             <option value="50">50개씩 보기</option>
+            <option value="100" selected>100개씩 보기</option>
           </select>
         </div>
 
@@ -419,7 +407,7 @@
       datePreset: 'ALL',
       sortOrder: 'NEWEST',
       settings: {
-        pageSize: 10,
+        pageSize: 100,
         defaultPeriod: 'ALL',
         showDevReply: true,
         highlightKeyword: true
@@ -429,6 +417,13 @@
     let appsData = [];
     let reviewsData = [];
     let reviewArchiveStart = '';
+    let reviewBatchItems = [];
+    let nextReviewIndex = 0;
+    const reviewBatchObserver = 'IntersectionObserver' in window
+      ? new IntersectionObserver(entries => {
+          if (entries.some(entry => entry.isIntersecting)) appendReviewBatch();
+        }, { rootMargin: '0px 0px 160px 0px' })
+      : null;
 
     // -----------------------------------------------------------------------
     // 3. 유틸리티 함수
@@ -547,24 +542,39 @@
     function parseHashRoute() {
       const hash = window.location.hash || '#/';
       const match = hash.match(/^#\/(\d+)(?:\/(\d+))?$/);
+      const fromDetail = state.currentView === 'DETAIL';
       if (match) {
-        const appId = parseInt(match[1], 10);
-        const page = match[2] ? parseInt(match[2], 10) : 1;
-        const exists = appsData.find(a => a.id === appId);
-        if (exists) {
+        const appId = Number(match[1]);
+        const page = Math.max(1, Number(match[2]) || 1);
+        if (appsData.some(app => app.id === appId)) {
+          const appChanged = !fromDetail || state.currentAppId !== appId;
+          const pageChanged = state.currentPage !== page;
           state.currentView = 'DETAIL';
           state.currentAppId = appId;
-          state.currentPage = Math.max(1, page);
+          state.currentPage = page;
           renderApp();
+          if (appChanged) {
+            document.getElementById('detailAppName').focus({ preventScroll: true });
+            window.scrollTo(0, 0);
+          } else if (pageChanged) {
+            document.getElementById('paginationContainer').scrollIntoView({ block: 'center' });
+          }
           return;
         }
       }
       state.currentView = 'HOME';
+      reviewBatchObserver?.disconnect();
       renderApp();
+      if (fromDetail) window.scrollTo(0, 0);
     }
 
     function navigateToApp(appId, page = 1) {
-      window.location.hash = `#/${appId}/${page}`;
+      const hash = '#/' + appId + '/' + page;
+      if (window.location.hash !== hash) {
+        window.location.hash = hash;
+      } else if (state.currentPage !== page) {
+        parseHashRoute();
+      }
     }
 
     function goHome(e) {
@@ -572,6 +582,7 @@
       window.location.hash = '#/';
     }
 
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
     window.addEventListener('hashchange', parseHashRoute);
 
     // -----------------------------------------------------------------------
@@ -806,8 +817,8 @@
       quickTabs.innerHTML = appsData.map(item => {
         const isActive = item.id === app.id;
         return `
-          <button onclick="navigateToApp(${item.id}, 1)"
-            class="px-3 py-1.5 rounded-lg text-xs font-semibold shrink-0 transition ${
+          <button type="button" aria-current="${isActive ? 'true' : 'false'}" onclick="navigateToApp(${item.id}, 1)"
+            class="min-w-0 rounded-md px-1 py-2 text-xs font-semibold leading-tight transition sm:px-3 ${
               isActive
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
@@ -836,7 +847,6 @@
       if (state.currentPage > totalPages) state.currentPage = totalPages;
 
       const startIdx = (state.currentPage - 1) * pageSize;
-      const pageItems = filtered.slice(startIdx, startIdx + pageSize);
 
       document.getElementById('filteredCountText').textContent = filtered.length;
       document.getElementById('archiveScopeBadge').textContent = reviewArchiveStart ? reviewArchiveStart + '부터 수집' : '';
@@ -848,7 +858,7 @@
       }
 
       const listContainer = document.getElementById('reviewsListContainer');
-      if (pageItems.length === 0) {
+      if (filtered.length === 0) {
         listContainer.innerHTML = `
           <div class="bg-white rounded-xl border border-slate-200 p-12 text-center space-y-2">
             <div class="text-slate-300 text-3xl"><i class="fa-regular fa-folder-open"></i></div>
@@ -857,10 +867,31 @@
           </div>
         `;
       } else {
-        listContainer.innerHTML = pageItems.map(rev => renderReviewCard(rev)).join('');
+        listContainer.innerHTML = filtered.slice(startIdx, startIdx + pageSize).map(renderReviewCard).join('');
       }
 
+      reviewBatchItems = filtered;
+      nextReviewIndex = Math.min(startIdx + pageSize, filtered.length);
+      document.getElementById('reviewLoadStatus').textContent = '';
+      updateReviewBatchObserver();
       renderPagination(totalPages);
+    }
+
+    function updateReviewBatchObserver() {
+      const row = document.getElementById('moreReviewsRow');
+      reviewBatchObserver?.disconnect();
+      row.hidden = nextReviewIndex >= reviewBatchItems.length;
+      if (!row.hidden) reviewBatchObserver?.observe(row);
+    }
+
+    function appendReviewBatch() {
+      if (state.currentView !== 'DETAIL' || nextReviewIndex >= reviewBatchItems.length) return;
+      const end = Math.min(nextReviewIndex + state.settings.pageSize, reviewBatchItems.length);
+      const added = reviewBatchItems.slice(nextReviewIndex, end);
+      document.getElementById('reviewsListContainer').insertAdjacentHTML('beforeend', added.map(renderReviewCard).join(''));
+      nextReviewIndex = end;
+      document.getElementById('reviewLoadStatus').textContent = '리뷰 ' + added.length + '개를 더 표시했습니다.';
+      updateReviewBatchObserver();
     }
 
     function renderReviewCard(rev) {
