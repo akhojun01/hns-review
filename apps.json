@@ -1,0 +1,79 @@
+[
+  {
+    "id": 1,
+    "slug": "gsshop",
+    "shortCode": "GS",
+    "name": "GS홈쇼핑",
+    "subName": "GS SHOP",
+    "desc": "TV홈쇼핑·모바일 라이브",
+    "color": "bg-emerald-600",
+    "androidPkg": "gsshop.mobile.v2",
+    "iosId": "365438600"
+  },
+  {
+    "id": 2,
+    "slug": "cjonstyle",
+    "shortCode": "CJ",
+    "name": "CJ온스타일",
+    "subName": "CJ ONSTYLE",
+    "desc": "TV홈쇼핑·모바일 라이브",
+    "color": "bg-violet-600",
+    "androidPkg": "com.cjoshppingphone",
+    "iosId": "366509410"
+  },
+  {
+    "id": 3,
+    "slug": "hmall",
+    "shortCode": "HM",
+    "name": "현대홈쇼핑",
+    "subName": "현대Hmall",
+    "desc": "현대홈쇼핑·백화점 통합 쇼핑",
+    "color": "bg-slate-800",
+    "androidPkg": "com.hmallapp",
+    "iosId": "870397981"
+  },
+  {
+    "id": 4,
+    "slug": "lotteimall",
+    "shortCode": "LT",
+    "name": "롯데홈쇼핑",
+    "subName": "롯데아이몰",
+    "desc": "TV홈쇼핑·모바일 라이브",
+    "color": "bg-rose-600",
+    "androidPkg": "com.omnitel.android.lottewebview",
+    "iosId": "380934119"
+  },
+  {
+    "id": 5,
+    "slug": "hnsmall",
+    "shortCode": "H&S",
+    "name": "홈앤쇼핑",
+    "subName": "H&S Mall",
+    "desc": "TV홈쇼핑·중소기업 상품",
+    "color": "bg-indigo-600",
+    "androidPkg": "com.hnsmall",
+    "iosId": "687619460"
+  },
+  {
+    "id": 6,
+    "slug": "nsmall",
+    "shortCode": "NS",
+    "name": "NS홈쇼핑",
+    "subName": "NS Mall",
+    "desc": "TV홈쇼핑·식품 쇼핑",
+    "color": "bg-amber-600",
+    "androidPkg": "com.nsmobilehub",
+    "iosId": "405015280"
+  },
+  {
+    "id": 7,
+    "slug": "gongyoung",
+    "shortCode": "공영",
+    "name": "공영홈쇼핑",
+    "subName": "공영쇼핑",
+    "desc": "중소기업·농축수산물 쇼핑",
+    "color": "bg-sky-600",
+    "androidPkg": "com.pub.fm",
+    "iosId": "1043437583"
+  }
+]
