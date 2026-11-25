@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-25 22:04:28 KST",
+  "updatedAt": "2026-11-25 22:06:03 KST",
   "startDate": "2026-01-01",
-  "totalCount": 10116,
+  "totalCount": 10117,
   "apps": [
     {
       "id": 1,
@@ -16,7 +16,7 @@
       "storeListings": {
         "Android": {
           "title": "GS SHOP",
-          "rating": 4.79064
+          "rating": 4.7906804
         },
         "iOS": {
           "title": "GS SHOP",
@@ -38,7 +38,7 @@
       "storeListings": {
         "Android": {
           "title": "CJ온스타일",
-          "rating": 4.7987113
+          "rating": 4.7987237
         },
         "iOS": {
           "title": "CJ온스타일",
@@ -126,7 +126,7 @@
       "storeListings": {
         "Android": {
           "title": "NS홈쇼핑",
-          "rating": 4.757611
+          "rating": 4.7575865
         },
         "iOS": {
           "title": "NS홈쇼핑",
@@ -300,6 +300,18 @@
       "date": "2026-11-24",
       "version": "9.3.51",
       "content": "소비전력이. 정말. 좋아서 어떻99하지",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 102700125694814,
+      "appId": 3,
+      "os": "Android",
+      "rating": 4,
+      "author": "하영순",
+      "date": "2026-11-24",
+      "version": "7.1.7",
+      "content": "배송이 정말 빨라요",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -121596,7 +121608,7 @@
     {
       "appId": 3,
       "os": "Android",
-      "count": 2421,
+      "count": 2422,
       "earliestDate": "2026-01-01",
       "backfillOldestSeen": "2025-12-13",
       "backfillEnd": "cutoff",
