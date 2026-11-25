@@ -185,26 +185,12 @@
             </div>
           </div>
 
-          <!-- 우측 OS별 평점 요약 + 엑셀 다운로드 -->
-          <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
-            <!-- Android 평점 박스 -->
-            <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-emerald-50/70 border border-emerald-200/80">
-              <i class="fa-brands fa-android text-emerald-600 text-base"></i>
-              <div>
-                <div class="text-[10px] font-semibold text-emerald-800 uppercase">Android</div>
-                <div id="detailAndroidScore" class="text-xs sm:text-sm font-bold text-slate-900">4.3 ★ (0)</div>
-              </div>
-            </div>
-
-            <!-- iOS 평점 박스 -->
-            <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-50/70 border border-sky-200/80">
-              <i class="fa-brands fa-apple text-slate-800 text-base"></i>
-              <div>
-                <div class="text-[10px] font-semibold text-sky-800 uppercase">iOS</div>
-                <div id="detailIosScore" class="text-xs sm:text-sm font-bold text-slate-900">4.5 ★ (0)</div>
-              </div>
-            </div>
-
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" onclick="openVersionAnalysis()" aria-haspopup="dialog"
+              class="inline-flex items-center gap-2 rounded-lg border border-indigo-200 bg-indigo-50 px-3.5 py-2.5 text-xs sm:text-sm font-semibold text-indigo-700 hover:bg-indigo-100 transition">
+              <i class="fa-solid fa-chart-bar" aria-hidden="true"></i>
+              <span>앱 버전 분석</span>
+            </button>
             <!-- 엑셀 다운로드 버튼 -->
             <button onclick="exportCurrentAppExcel()"
               class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-lg text-xs sm:text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition">
@@ -214,6 +200,7 @@
           </div>
         </div>
         <div id="detailStoreInfo" class="mt-4 border-t border-slate-100 pt-3"></div>
+        <div id="detailRatingComparison" class="mt-4 border-t border-slate-100 pt-3"></div>
       </div>
 
       <!-- 필터 & 기간 선택 컨트롤 패널 -->
@@ -314,12 +301,26 @@
       </div>
 
       <!-- 페이지네이션 -->
-      <div id="paginationContainer" class="flex items-center justify-center gap-1.5 pt-3 pb-6">
+      <div id="paginationContainer" class="flex flex-wrap items-center justify-center gap-1.5 pt-3 pb-6">
         <!-- JS 동적 렌더링 -->
       </div>
     </section>
 
   </main>
+
+  <dialog id="versionAnalysisDialog" aria-labelledby="versionAnalysisTitle"
+    class="m-auto max-h-[85dvh] w-11/12 max-w-lg overflow-auto rounded-2xl border border-slate-200 bg-white p-5 text-slate-900 shadow-xl backdrop:bg-slate-900/50">
+    <header class="flex items-start justify-between gap-3">
+      <div>
+        <h2 id="versionAnalysisTitle" class="text-base font-bold">앱 버전 분석</h2>
+        <p id="versionAnalysisScope" class="mt-1 text-xs text-slate-600"></p>
+      </div>
+      <form method="dialog">
+        <button autofocus class="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-semibold hover:bg-slate-100">닫기</button>
+      </form>
+    </header>
+    <div id="versionAnalysisBody" class="mt-4 space-y-5"></div>
+  </dialog>
 
   <!-- ===================================================================== -->
   <!-- 푸터 -->
@@ -473,7 +474,12 @@
         ['App Store 업데이트', apple?.updatedOn || '—']
       ];
       if (includeRatingCounts) {
-        rows.push(['Google Play 누적 평가', storeRatingCount(google)], ['App Store 누적 평가', storeRatingCount(apple)]);
+        rows[0][0] = 'Google Play 누적 다운로드';
+        rows.push(
+          ['조회기간 다운로드', '공개 데이터 없음'],
+          ['Google Play 누적 평가', storeRatingCount(google)],
+          ['App Store 누적 평가', storeRatingCount(apple)]
+        );
       }
       return `<dl class="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-1.5 text-[11px] text-slate-600">
         ${rows.map(([label, value]) => `<dt>${label}</dt><dd class="text-right font-semibold tabular-nums text-slate-800">${escapeHtml(value)}</dd>`).join('')}
@@ -656,10 +662,10 @@
               <div class="text-[11px] font-semibold text-slate-500">현재 스토어 평점</div>
               <div class="grid grid-cols-2 gap-1.5 text-[11px]">
                 <div class="flex items-center justify-between gap-1 rounded border border-emerald-100 bg-emerald-50 px-2 py-1.5 text-emerald-800">
-                  <span>Google Play</span><strong>${androidRating}</strong>
+                  <span>Google Play</span><strong class="shrink-0 whitespace-nowrap tabular-nums">${androidRating}</strong>
                 </div>
                 <div class="flex items-center justify-between gap-1 rounded border border-sky-100 bg-sky-50 px-2 py-1.5 text-sky-800">
-                  <span>App Store</span><strong>${iosRating}</strong>
+                  <span>App Store</span><strong class="shrink-0 whitespace-nowrap tabular-nums">${iosRating}</strong>
                 </div>
               </div>
               ${renderStoreInfo(app)}
@@ -723,6 +729,74 @@
       return list;
     }
 
+    function renderRatingComparison(app) {
+      const periodReviews = reviewsData.filter(review => review.appId === app.id &&
+        (!state.startDate || review.date >= state.startDate) && (!state.endDate || review.date <= state.endDate));
+      const platforms = [['Android', 'Google Play'], ['iOS', 'App Store']];
+      const rows = platforms.map(([os, store]) => {
+        const sample = periodReviews.filter(review => review.os === os);
+        const average = sample.length ? sample.reduce((sum, review) => sum + review.rating, 0) / sample.length : null;
+        const storeRating = app.storeListings?.[os]?.rating;
+        const diff = average !== null && Number.isFinite(storeRating) && storeRating > 0
+          ? Math.round((Number(storeRating.toFixed(1)) - Number(average.toFixed(1))) * 10) / 10 : null;
+        const diffText = diff === null ? '—' : (diff > 0 ? '+' : '') + diff.toFixed(1) + '점';
+        const diffStyle = diff > 0 ? 'text-emerald-700' : diff < 0 ? 'text-rose-700' : 'text-slate-600';
+        return `<tr class="border-t border-slate-100">
+          <th scope="row" class="px-2 py-2 text-left font-semibold">${store}</th>
+          <td class="px-2 py-2 text-right tabular-nums">${formatStoreRating(average)} <span class="text-slate-500">(${sample.length.toLocaleString('ko-KR')}건)</span></td>
+          <td class="px-2 py-2 text-right whitespace-nowrap tabular-nums">${formatStoreRating(storeRating)}</td>
+          <td class="px-2 py-2 text-right font-bold whitespace-nowrap tabular-nums ${diffStyle}">${diffText}</td>
+        </tr>`;
+      }).join('');
+      return `<div class="overflow-x-auto">
+        <table class="w-full text-xs text-slate-700">
+          <caption class="mb-1 text-left font-semibold text-slate-900">스토어별 평점 비교</caption>
+          <thead class="bg-slate-50 text-slate-600">
+            <tr><th scope="col" class="px-2 py-2 text-left">스토어</th><th scope="col" class="px-2 py-2 text-right">조회기간 평균</th>
+              <th scope="col" class="px-2 py-2 text-right">현재 평점</th><th scope="col" class="px-2 py-2 text-right">차이</th></tr>
+          </thead><tbody>${rows}</tbody>
+        </table>
+      </div>
+      <p class="mt-1.5 text-[11px] text-slate-600">차이 = 현재 스토어 평점 − 조회기간에 수집된 리뷰의 평균. 두 값의 집계 기준이 다릅니다.</p>`;
+    }
+
+    function openVersionAnalysis() {
+      const app = appsData.find(item => item.id === state.currentAppId);
+      const reviews = getFilteredReviewsForCurrentApp();
+      const dialog = document.getElementById('versionAnalysisDialog');
+      document.getElementById('versionAnalysisTitle').textContent = app.name + ' 앱 버전 분석';
+      document.getElementById('versionAnalysisScope').textContent = '현재 필터의 리뷰 ' + reviews.length.toLocaleString('ko-KR') + '건 · 비율은 OS별 리뷰 건수 기준';
+      const platforms = state.osFilter === 'ALL' ? ['Android', 'iOS'] : [state.osFilter];
+      document.getElementById('versionAnalysisBody').innerHTML = platforms.map(os => {
+        const sample = reviews.filter(review => review.os === os);
+        const counts = new Map();
+        for (const review of sample) {
+          const raw = String(review.version || '').trim();
+          const version = raw && raw !== '-' ? raw : '버전 미확인';
+          counts.set(version, (counts.get(version) || 0) + 1);
+        }
+        const sorted = [...counts].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'ko', { numeric: true }));
+        const rows = sorted.map(([version, count]) => {
+          const percent = 100 * count / sample.length;
+          const label = percent < 0.1 ? '&lt;0.1' : percent.toFixed(1);
+          return `<li class="space-y-1">
+            <div class="flex items-baseline justify-between gap-3 text-xs">
+              <span class="break-all font-medium">${escapeHtml(version)}</span>
+              <span class="shrink-0 tabular-nums text-slate-700">${count.toLocaleString('ko-KR')}건 · <strong>${label}%</strong></span>
+            </div>
+            <div class="h-1.5 overflow-hidden rounded-full bg-slate-100" aria-hidden="true">
+              <div class="h-full rounded-full bg-indigo-500" style="width:${percent}%"></div>
+            </div>
+          </li>`;
+        }).join('');
+        return `<section class="space-y-2.5 rounded-lg border border-slate-200 p-3">
+          <h3 class="text-sm font-bold">${os} <span class="ml-1 text-xs font-medium text-slate-500">${sample.length.toLocaleString('ko-KR')}건</span></h3>
+          ${rows ? `<ul class="space-y-2.5">${rows}</ul>` : '<p class="text-xs text-slate-600">해당하는 리뷰가 없습니다.</p>'}
+        </section>`;
+      }).join('');
+      dialog.showModal();
+    }
+
     function renderDetailView() {
       updateRatingButtons();
       const app = appsData.find(a => a.id === state.currentAppId) || appsData[0];
@@ -753,17 +827,7 @@
       document.getElementById('detailAppDesc').textContent = storeSubtitle(app);
       document.getElementById('detailStoreInfo').innerHTML = renderStoreInfo(app, true);
 
-      // OS별 평점 요약
-      const allAppReviews = reviewsData.filter(r => r.appId === app.id &&
-        (!state.startDate || r.date >= state.startDate) && (!state.endDate || r.date <= state.endDate));
-      const aosList = allAppReviews.filter(r => r.os === 'Android');
-      const iosList = allAppReviews.filter(r => r.os === 'iOS');
-
-      const aosAvg = aosList.length ? (aosList.reduce((s, r) => s + r.rating, 0) / aosList.length).toFixed(1) : '-';
-      const iosAvg = iosList.length ? (iosList.reduce((s, r) => s + r.rating, 0) / iosList.length).toFixed(1) : '-';
-
-      document.getElementById('detailAndroidScore').textContent = `${aosAvg} ★ (${aosList.length}건)`;
-      document.getElementById('detailIosScore').textContent = `${iosAvg} ★ (${iosList.length}건)`;
+      document.getElementById('detailRatingComparison').innerHTML = renderRatingComparison(app);
 
       // 필터링된 리뷰 목록 계산 및 페이지네이션
       const filtered = getFilteredReviewsForCurrentApp();
@@ -870,7 +934,12 @@
         </button>
       `;
 
-      for (let p = 1; p <= totalPages; p++) {
+      const pages = new Set([1, totalPages]);
+      for (let p = Math.max(1, cur - 2); p <= Math.min(totalPages, cur + 2); p++) pages.add(p);
+      let previous = 0;
+      for (const p of [...pages].sort((a, b) => a - b)) {
+        if (previous && p > previous + 1) buttonsHtml += '<span class="px-1 text-slate-500" aria-hidden="true">…</span>';
+        previous = p;
         buttonsHtml += `
           <button onclick="navigateToApp(${state.currentAppId}, ${p})"
             class="w-8 h-8 rounded-lg text-xs font-bold transition ${
