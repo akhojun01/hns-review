@@ -142,7 +142,14 @@ def collect_source(app, os, pages, archive, previous_scan, now):
 
 def google_listing(package):
     listing = play_app(package, lang='ko', country='kr')
-    return {'title': listing.get('title') or '', 'rating': listing.get('score')}
+    updated = listing.get('updated')
+    return {
+        'title': listing.get('title') or '',
+        'rating': listing.get('score'),
+        'minDownloads': listing.get('minInstalls'),
+        'ratingCount': listing.get('ratings'),
+        'updatedOn': datetime.fromtimestamp(updated, KST).date().isoformat() if updated else None,
+    }
 
 
 def apple_listing(app_id):
@@ -162,15 +169,25 @@ def apple_listing(app_id):
     rating = page_text(r'<div\b[^>]*data-testid="amp-rating__average-rating"[^>]*>(.*?)</div>')
     if not title:
         raise RuntimeError('App Store 상품 정보를 확인할 수 없습니다.')
-    if rating:
-        return {'title': title, 'subtitle': subtitle, 'rating': float(rating.replace(',', '.'))}
-
+    public_count = page_text(r'<div\b[^>]*data-testid="amp-rating__rating-count-text"[^>]*>(.*?)</div>')
     lookup = f'https://itunes.apple.com/lookup?id={app_id}&country=kr&entity=software'
-    with urllib.request.urlopen(lookup, timeout=12) as response:
-        results = json.load(response)['results']
-    result = next((item for item in results if str(item.get('trackId')) == str(app_id)), {})
-    return {'title': result.get('trackName') or title, 'subtitle': subtitle,
-            'rating': result.get('averageUserRating') or None}
+    result = {}
+    try:
+        with urllib.request.urlopen(lookup, timeout=12) as response:
+            results = json.load(response)['results']
+        result = next(item for item in results if str(item.get('trackId')) == str(app_id))
+    except (OSError, ValueError, KeyError, StopIteration) as error:
+        print(f'::warning::App Store {app_id} 버전 정보 조회 실패: {error}', file=sys.stderr)
+
+    release = result.get('currentVersionReleaseDate')
+    return {
+        'title': title,
+        'subtitle': subtitle,
+        'rating': float(rating.replace(',', '.')) if rating else result.get('averageUserRating'),
+        'ratingCount': result.get('userRatingCount'),
+        'ratingCountLabel': public_count,
+        'updatedOn': datetime.fromisoformat(release.replace('Z', '+00:00')).astimezone(KST).date().isoformat() if release else None,
+    }
 
 
 def read_store_listings(app, previous_app):
@@ -182,8 +199,14 @@ def read_store_listings(app, previous_app):
             listing = get_listing(app[key])
             if not listing['title']:
                 raise RuntimeError('스토어 상품명을 확인할 수 없습니다.')
+            if previous_app.get(key) == app[key]:
+                previous = previous_app.get('storeListings', {}).get(os, {})
+                for field in ('updatedOn', 'ratingCount', 'minDownloads'):
+                    if listing.get(field) is None and previous.get(field) is not None:
+                        listing[field] = previous[field]
             listings[os] = listing
-            print(f"{app['name']} {os} 스토어 평점: {listing.get('rating')}", flush=True)
+            print(f"{app['name']} {os} 상품 정보: 업데이트 {listing.get('updatedOn')}, "
+                  f"다운로드 {listing.get('minDownloads')}, 평가 {listing.get('ratingCount')}", flush=True)
         except Exception as error:
             if previous_app.get(key) == app[key]:
                 previous = previous_app.get('storeListings', {}).get(os)
