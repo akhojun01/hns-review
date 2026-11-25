@@ -1,36 +1,66 @@
 name: Scrape Store Reviews
 
 on:
-schedule:
-# 매일 한국시간 오전 9시, 오후 2시, 오후 6시 자동 실행 (UTC 00:00, 05:00, 09:00)
-- cron: '0 0,5,9 * * *'
-workflow_dispatch: # GitHub Actions 탭에서 수동 즉시 실행 가능
+  schedule:
+    # 09:00, 14:00, 18:00 Korea Standard Time
+    - cron: '0 0,5,9 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - apps.json
+      - scraper.py
+      - .github/workflows/scrape_reviews.yml
 
-permissions:
-contents: write
+concurrency:
+  group: review-pages
+  cancel-in-progress: false
 
 jobs:
-scrape:
-runs-on: ubuntu-latest
-steps:
-- name: 저장소 코드 체크아웃
-uses: actions/checkout@v4
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install review collector dependency
+        run: python -m pip install google-play-scraper==1.2.7
+      - name: Collect store reviews
+        env:
+          TZ: Asia/Seoul
+        run: python scraper.py
+      - name: Save the collected reviews
+        run: |
+          git add reviews_data.json
+          if ! git diff --cached --quiet; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'Update store reviews'
+            git push origin HEAD:main
+          fi
+      - name: Stage the dashboard for GitHub Pages
+        run: |
+          mkdir _site
+          cp index.html reviews_data.json _site/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
 
-  - name: Python 환경 설정
-    uses: actions/setup-python@v5
-    with:
-      python-version: '3.11'
-
-  - name: google-play-scraper 설치
-    run: pip install google-play-scraper
-
-  - name: 실제 스토어 리뷰 수집 실행
-    run: python scraper.py
-
-  - name: 수집된 reviews_data.json 자동 커밋
-    run: |
-      git config --local user.email "action@github.com"
-      git config --local user.name "Review Scraper Bot"
-      git add reviews_data.json
-      git diff --quiet && git diff --staged --quiet || git commit -m "chore: update real store reviews"
-      git push
+  deploy:
+    needs: scrape
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy the dashboard
+        id: deployment
+        uses: actions/deploy-pages@v4
