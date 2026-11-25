@@ -79,19 +79,10 @@
           <span class="hidden sm:inline">설정</span>
         </button>
 
-        <!-- 관리자 전용: 사이트 추가 버튼 (로그인 시 표시) -->
-        <button id="btnAddSiteHeader" onclick="openAddSiteModal()"
-          class="hidden inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-sm transition">
-          <i class="fa-solid fa-plus"></i>
-          <span>사이트 추가</span>
-        </button>
-
-        <!-- 관리자 로그인 / 상태 버튼 -->
-        <button id="btnAdminAuth" onclick="handleAdminButtonClick()"
-          class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 bg-white transition">
-          <i class="fa-solid fa-lock text-slate-400"></i>
-          <span id="adminBtnLabel">관리자</span>
-        </button>
+        <a href="https://github.com/akhojun01/hns-review/blob/main/apps.json" target="_blank" rel="noopener noreferrer" title="GitHub 저장소에서 수집 대상 앱을 관리합니다" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 bg-white transition">
+          <i class="fa-solid fa-gear text-slate-400" aria-hidden="true"></i>
+          <span>앱 관리</span>
+        </a>
       </div>
     </div>
   </header>
@@ -123,10 +114,10 @@
             <input id="homeAppSearch" type="text" oninput="renderHomeGrid()" placeholder="앱 이름 또는 코드 검색..."
               class="w-full pl-8 pr-3 py-2 text-sm bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:bg-white focus:border-slate-400 transition" />
           </div>
-          <button id="btnSyncLive" onclick="syncRealStoreReviews(true)" title="실제 스토어 최신 리뷰 동기화"
+          <button id="btnSyncLive" onclick="syncRealStoreReviews(true)" title="최근 수집 결과 불러오기"
             class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 whitespace-nowrap transition">
             <i id="syncIcon" class="fa-solid fa-rotate"></i>
-            <span>실시간 동기화</span>
+            <span>리뷰 새로고침</span>
           </button>
           <button onclick="exportAllAppsExcel()" title="전체 홈쇼핑사 통합 엑셀 다운로드"
             class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs sm:text-sm font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 whitespace-nowrap transition">
@@ -144,17 +135,6 @@
         </div>
         <div class="text-[11px] text-slate-400 font-mono" id="lastSyncTimeText"></div>
       </div>
-      </div>
-
-      <!-- 관리자 안내 배너 (로그인 시 노출) -->
-      <div id="adminBanner" class="hidden items-center justify-between gap-3 px-4 py-3 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs sm:text-sm">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-shield-halved text-indigo-600"></i>
-          <span><strong>관리자 모드 활성화됨</strong> (khojun0@hnsmall.com) — 새로운 쇼핑몰 앱을 추가하거나 기존 앱을 관리할 수 있습니다.</span>
-        </div>
-        <button onclick="openAddSiteModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 whitespace-nowrap">
-          + 새 사이트 추가
-        </button>
       </div>
 
       <!-- 앱 카드 그리드 (review.stlee.kr 스타일) -->
@@ -338,190 +318,9 @@
   <footer class="bg-white border-t border-slate-200/80 py-5 mt-auto">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
       <div>REVIEW-SCRAPER · 홈쇼핑 모바일 앱(Android / iOS) 통합 리뷰 모니터링 대시보드</div>
-      <div>팀 협업용 상태 관리 및 엑셀 추출 지원</div>
+      <div>임시 메모·상태 변경은 이 화면에서만 유지됩니다.</div>
     </div>
   </footer>
-
-  <!-- ===================================================================== -->
-  <!-- MODAL 1: 관리자 로그인 / 아이디·비밀번호 찾기 / 비밀번호 변경 -->
-  <!-- ===================================================================== -->
-  <div id="adminModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-      <!-- 모달 헤더 -->
-      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-user-shield text-indigo-600"></i>
-          <span id="adminModalTitle">관리자 인증</span>
-        </h3>
-        <button onclick="closeAdminModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <!-- 비로그인 상태 탭 (로그인 / 아이디 찾기 / 비밀번호 찾기) -->
-      <div id="adminAuthTabs" class="grid grid-cols-3 border-b border-slate-100 bg-slate-50 text-xs font-semibold">
-        <button onclick="switchAdminTab('LOGIN')" id="tabAdminLOGIN" class="py-2.5 text-indigo-600 border-b-2 border-indigo-600 bg-white">로그인</button>
-        <button onclick="switchAdminTab('FIND_ID')" id="tabAdminFIND_ID" class="py-2.5 text-slate-500 hover:text-slate-800">아이디 찾기</button>
-        <button onclick="switchAdminTab('RESET_PW')" id="tabAdminRESET_PW" class="py-2.5 text-slate-500 hover:text-slate-800">비밀번호 찾기</button>
-      </div>
-
-      <div class="p-5">
-        <!-- 1) 로그인 폼 -->
-        <form id="formAdminLogin" onsubmit="submitAdminLogin(event)" class="space-y-3.5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">관리자 아이디 (이메일)</label>
-            <input type="email" id="loginEmailInput" required placeholder="khojun0@hnsmall.com"
-              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">비밀번호</label>
-            <input type="password" id="loginPasswordInput" required placeholder="비밀번호를 입력하세요"
-              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-          </div>
-          <p id="loginErrorMsg" class="hidden text-xs text-rose-600 font-medium"></p>
-          <button type="submit" class="w-full py-2.5 rounded-lg bg-slate-900 hover:bg-indigo-600 text-white text-sm font-semibold transition">
-            관리자 로그인
-          </button>
-        </form>
-
-        <!-- 2) 아이디 찾기 폼 -->
-        <div id="formFindId" class="hidden space-y-3.5">
-          <p class="text-xs text-slate-500 leading-relaxed">
-            등록된 사내 도메인 또는 관리자 소속 회사명을 입력하면 등록된 관리자 아이디(이메일)를 확인할 수 있습니다.
-          </p>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">소속 회사 / 사내 도메인 키워드</label>
-            <input type="text" id="findIdKeyword" placeholder="예: 홈앤쇼핑 또는 hnsmall"
-              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-          </div>
-          <button type="button" onclick="handleFindAdminId()" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition">
-            관리자 아이디 조회
-          </button>
-          <div id="findIdResultBox" class="hidden p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-900"></div>
-        </div>
-
-        <!-- 3) 비밀번호 찾기 / 재설정 폼 -->
-        <div id="formResetPw" class="hidden space-y-3.5">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">관리자 이메일 입력</label>
-            <div class="flex gap-2">
-              <input type="email" id="resetEmailInput" placeholder="khojun0@hnsmall.com"
-                class="flex-1 px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-              <button type="button" onclick="sendVerificationCode()" class="px-3 py-2 rounded-lg bg-slate-800 text-white text-xs font-semibold hover:bg-slate-700 whitespace-nowrap">
-                인증코드 발급
-              </button>
-            </div>
-          </div>
-
-          <div id="resetCodeSection" class="hidden space-y-3 pt-2 border-t border-slate-100">
-            <div id="issuedCodeHint" class="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-xs text-amber-900"></div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">인증코드 6자리</label>
-              <input type="text" id="verifyCodeInput" placeholder="발급된 인증코드 입력"
-                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-slate-700 mb-1">새 비밀번호</label>
-              <input type="password" id="newPasswordInput" placeholder="새 비밀번호 입력"
-                class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-            </div>
-            <button type="button" onclick="confirmPasswordReset()" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition">
-              비밀번호 재설정 완료
-            </button>
-          </div>
-          <p id="resetErrorMsg" class="hidden text-xs text-rose-600 font-medium"></p>
-        </div>
-
-        <!-- 4) 로그인 완료 후 관리자 계정 패널 -->
-        <div id="adminLoggedInPanel" class="hidden space-y-4">
-          <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-            <div class="text-xs text-slate-500">현재 로그인된 관리자 계정</div>
-            <div class="text-sm font-bold text-slate-900" id="loggedInEmailDisplay">khojun0@hnsmall.com</div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2">
-            <button onclick="closeAdminModal(); openAddSiteModal();" class="py-2.5 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-plus"></i> 사이트 추가
-            </button>
-            <button onclick="logoutAdmin()" class="py-2.5 px-3 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-semibold flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================================================================== -->
-  <!-- MODAL 2: 사이트 추가 모달 (관리자 전용) -->
-  <!-- ===================================================================== -->
-  <div id="addSiteModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-      <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
-        <h3 class="font-bold text-base text-slate-900 flex items-center gap-2">
-          <i class="fa-solid fa-square-plus text-indigo-600"></i>
-          새 모니터링 앱(사이트) 추가
-        </h3>
-        <button onclick="closeAddSiteModal()" class="w-8 h-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
-
-      <form onsubmit="submitAddSite(event)" class="p-5 space-y-3.5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">앱 / 회사명 *</label>
-            <input type="text" id="newSiteName" required placeholder="예: SSG.COM 또는 쇼핑엔티"
-              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">영문 슬러그 코드 *</label>
-            <input type="text" id="newSiteSlug" required placeholder="예: ssg 또는 shoppingnt"
-              class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">한줄 설명</label>
-          <input type="text" id="newSiteDesc" placeholder="예: 모바일 라이브 및 통합 쇼핑 앱 리뷰"
-            class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">Android 패키지명</label>
-            <input type="text" id="newSiteAndroidPkg" placeholder="com.example.app"
-              class="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-          </div>
-          <div>
-            <label class="block text-xs font-semibold text-slate-700 mb-1">iOS App Store ID</label>
-            <input type="text" id="newSiteIosId" placeholder="id123456789"
-              class="w-full px-3 py-2 text-xs font-mono border border-slate-200 rounded-lg focus:outline-none focus:border-indigo-500" />
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">대표 컬러 테마</label>
-          <select id="newSiteColor" class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-white">
-            <option value="bg-indigo-600">인디고 블루 (Indigo)</option>
-            <option value="bg-emerald-600">에메랄드 그린 (Emerald)</option>
-            <option value="bg-rose-600">로즈 레드 (Rose)</option>
-            <option value="bg-amber-600">앰버 오렌지 (Amber)</option>
-            <option value="bg-sky-600">스카이 블루 (Sky)</option>
-            <option value="bg-violet-600">바이올렛 퍼플 (Violet)</option>
-            <option value="bg-slate-800">다크 슬레이트 (Slate)</option>
-          </select>
-        </div>
-
-        <div class="pt-2 flex justify-end gap-2">
-          <button type="button" onclick="closeAddSiteModal()" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-medium text-slate-600 hover:bg-slate-100">취소</button>
-          <button type="submit" class="px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700">
-            사이트 등록하기
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   <!-- ===================================================================== -->
   <!-- MODAL 3: 설정 모달 (페이지당 개수, 기본 기간, 키워드 하이라이트 등) -->
@@ -595,17 +394,8 @@
   <!-- ===================================================================== -->
   <script>
     // -----------------------------------------------------------------------
-    // 1. 관리자 계정 정보 및 전역 상태
-    // -----------------------------------------------------------------------
-    const ADMIN_ACCOUNT = {
-      email: 'khojun0@hnsmall.com',
-      password: 'ghwnsguswls1!',
-      company: '홈앤쇼핑'
-    };
-
+    // 대시보드 상태
     let state = {
-      isAdmin: false,
-      issuedResetCode: null,
       currentView: 'HOME', // 'HOME' | 'DETAIL'
       currentAppId: 1,
       currentPage: 1,
@@ -625,147 +415,8 @@
       }
     };
 
-    // -----------------------------------------------------------------------
-    // 2. 기본 7대 홈쇼핑사 데이터 + 샘플 리뷰 생성기
-    // -----------------------------------------------------------------------
-    const DEFAULT_APPS = [
-      {
-        id: 1,
-        slug: 'gsshop',
-        shortCode: 'GS',
-        name: 'GS홈쇼핑',
-        subName: 'GS SHOP',
-        desc: '샤피라이브 & TV홈쇼핑 모바일 통합 앱',
-        color: 'bg-emerald-600',
-        androidPkg: 'gsshop.mobile.v2',
-        iosId: 'id417408265'
-      },
-      {
-        id: 2,
-        slug: 'cjonstyle',
-        shortCode: 'CJ',
-        name: 'CJ오쇼핑',
-        subName: 'CJ온스타일',
-        desc: '원플랫폼 모바일 라이브 커머스 & 쇼츠 앱',
-        color: 'bg-violet-600',
-        androidPkg: 'com.cjoshoping.cjmall',
-        iosId: 'id426243952'
-      },
-      {
-        id: 3,
-        slug: 'hmall',
-        shortCode: 'HM',
-        name: '현대홈쇼핑',
-        subName: '현대Hmall',
-        desc: '현대홈쇼핑·백화점 통합 온라인 쇼핑 앱',
-        color: 'bg-slate-800',
-        androidPkg: 'com.hmallapp',
-        iosId: 'id446257206'
-      },
-      {
-        id: 4,
-        slug: 'lotteimall',
-        shortCode: 'LT',
-        name: '롯데홈쇼핑',
-        subName: '롯데아이몰',
-        desc: '벨리곰 & 모바일 TV 라이브 쇼핑 앱',
-        color: 'bg-rose-600',
-        androidPkg: 'com.lotte.lotteimall',
-        iosId: 'id438067397'
-      },
-      {
-        id: 5,
-        slug: 'hnsmall',
-        shortCode: 'H&S',
-        name: '홈앤쇼핑',
-        subName: 'H&S Mall',
-        desc: '텐텐프로모션 & 중소기업 상생 모바일 쇼핑 앱',
-        color: 'bg-indigo-600',
-        androidPkg: 'com.hnsmall',
-        iosId: 'id482441403'
-      },
-      {
-        id: 6,
-        slug: 'nsmall',
-        shortCode: 'NS',
-        name: 'NS홈쇼핑',
-        subName: 'NS Mall',
-        desc: '식품·건강기능식품 특화 TV홈쇼핑 모바일 앱',
-        color: 'bg-amber-600',
-        androidPkg: 'com.nsmall',
-        iosId: 'id491234510'
-      },
-      {
-        id: 7,
-        slug: 'gongyoung',
-        shortCode: '공영',
-        name: '공영홈쇼핑',
-        subName: '공영쇼핑',
-        desc: '우리 중소기업·농축수산물 전문 공영 쇼핑 앱',
-        color: 'bg-sky-600',
-        androidPkg: 'kr.co.gongyoung.shop',
-        iosId: 'id1021234987'
-      }
-    ];
-
-    let appsData = [...DEFAULT_APPS];
+    let appsData = [];
     let reviewsData = [];
-
-    // 현실적인 홈쇼핑 모바일 앱 리뷰 목업 생성
-    function generateInitialReviews() {
-      const sampleTemplates = [
-        { os: 'Android', rating: 5, author: '김*연', version: '8.42.1', content: '라이브 방송 보면서 바로 적립금 받고 결제하니까 너무 편해요! 배송도 다음날 바로 도착해서 만족합니다.', devReply: '안녕하세요 고객님! 만족스러운 쇼핑 경험을 드릴 수 있어 기쁩니다. 앞으로도 더 좋은 혜택으로 보답하겠습니다.' },
-        { os: 'iOS', rating: 2, author: '박*훈', version: '8.41.0', content: '아이폰 업데이트 이후로 라이브 방송 전체화면 전환할 때 가끔 화면이 멈추는 현상이 있습니다. 빠른 수정 부탁드려요.', devReply: '이용에 불편을 드려 죄송합니다. 해당 iOS 전체화면 재생 오류는 다음 패치(v8.42.2)에서 긴급 수정 반영될 예정입니다.' },
-        { os: 'Android', rating: 4, author: '이*정', version: '8.42.1', content: '쿠폰 적용이 한눈에 보여서 할인받기 좋네요. 다만 장바구니에서 옵션 변경할 때 한 번에 바뀌면 더 좋겠습니다.', devReply: '' },
-        { os: 'iOS', rating: 5, author: '최*영', version: '8.42.0', content: '방송 알림 설정해두니까 원하는 상품 방송 시작할 때 딱 알려줘서 놓치지 않고 구매했어요. UI가 깔끔합니다.', devReply: '' },
-        { os: 'Android', rating: 1, author: '정*수', version: '8.40.5', content: '간편결제 비밀번호 입력창에서 키패드가 늦게 올라옵니다. 결제 단계 속도가 조금 더 빨라졌으면 좋겠어요.', devReply: '소중한 의견 감사합니다. 결제 모듈 로딩 속도 개선 작업을 진행 중입니다.' },
-        { os: 'iOS', rating: 4, author: '한*미', version: '8.42.0', content: '상품 검색 필터가 세분화되어 있어서 원하는 가격대랑 무료배송 상품 찾기가 정말 수월해졌어요.', devReply: '' },
-        { os: 'Android', rating: 5, author: '강*우', version: '8.42.1', content: '부모님 선물 사드릴 때마다 자주 이용합니다. 편성표 보기도 쉽고 주문 내역 조회도 직관적이에요.', devReply: '' },
-        { os: 'iOS', rating: 3, author: '윤*서', version: '8.41.2', content: '전반적으로 무난한데 앱 처음 켤 때 이벤트 팝업이 두 번 연속 뜨는 건 조금 번거롭네요. 오늘 하루 보지 않기가 잘 작동했으면 합니다.', devReply: '' },
-        { os: 'Android', rating: 5, author: '조*현', version: '8.42.1', content: '출석체크 이벤트랑 룰렛 적립금 쏠쏠해서 매일 들어가게 됩니다. 최근 리뉴얼 후 속도가 확실히 빨라졌어요!', devReply: '' },
-        { os: 'iOS', rating: 2, author: '송*아', version: '8.41.0', content: '페이스ID 로그인이 가끔 풀려서 아이디 비밀번호를 다시 입력해야 할 때가 있어요. 확인 부탁드립니다.', devReply: '생체인증 세션 유지 관련 현상을 면밀히 점검하여 개선하겠습니다.' },
-        { os: 'Android', rating: 4, author: '임*진', version: '8.42.0', content: '모바일 전용 특가 상품이 많아서 TV보다 앱으로 주문하는 게 훨씬 이득이네요. 만족합니다.', devReply: '' },
-        { os: 'iOS', rating: 5, author: '신*희', version: '8.42.2', content: '교환/반품 신청 절차가 앱 안에서 터치 몇 번으로 끝나서 고객센터 전화할 필요가 없어 너무 좋아요.', devReply: '' }
-      ];
-
-      const statuses = ['미확인', '검토중', '답변완료'];
-      const memos = [
-        '',
-        'QA팀 재현 테스트 요청 완료',
-        '차주 정기 배포 패치 목록 반영',
-        '',
-        'CS팀 공통 안내 문구 전달됨',
-        ''
-      ];
-
-      let idCounter = 1001;
-      const now = new Date();
-
-      appsData.forEach((app, appIdx) => {
-        // 각 홈쇼핑사별로 24개씩 다양한 날짜의 리뷰 생성
-        for (let i = 0; i < 24; i++) {
-          const tpl = sampleTemplates[(i + appIdx * 3) % sampleTemplates.length];
-          const daysAgo = Math.floor((i * 4.2) + (appIdx % 3));
-          const reviewDate = new Date(now);
-          reviewDate.setDate(now.getDate() - daysAgo);
-          const dateStr = formatDateISO(reviewDate);
-
-          reviewsData.push({
-            id: idCounter++,
-            appId: app.id,
-            os: i % 2 === 0 ? 'Android' : 'iOS',
-            rating: tpl.rating,
-            author: tpl.author,
-            date: dateStr,
-            version: tpl.version,
-            content: `[${app.name}] ${tpl.content}`,
-            devReply: tpl.devReply,
-            teamStatus: tpl.devReply ? '답변완료' : statuses[(i + appIdx) % statuses.length],
-            teamMemo: memos[(i + appIdx) % memos.length]
-          });
-        }
-      });
-    }
 
     // -----------------------------------------------------------------------
     // 3. 유틸리티 함수
@@ -862,7 +513,6 @@
     // 5. 메인 화면 렌더링 분기
     // -----------------------------------------------------------------------
     function renderApp() {
-      updateAdminUI();
       const homeView = document.getElementById('homeView');
       const detailView = document.getElementById('detailView');
 
@@ -925,14 +575,6 @@
           <div onclick="navigateToApp(${app.id}, 1)"
             class="app-card cursor-pointer bg-white rounded-xl border border-slate-200/90 p-5 flex flex-col justify-between relative group">
             
-            <!-- 관리자 삭제 버튼 (기본 7개 이후 추가된 사이트 또는 관리자 모드) -->
-            ${state.isAdmin ? `
-              <button onclick="deleteSite(event, ${app.id})" title="사이트 삭제"
-                class="absolute top-3 right-3 w-7 h-7 rounded-lg bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white flex items-center justify-center text-xs transition z-10">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            ` : ''}
-
             <div>
               <div class="flex items-center gap-3 mb-3">
                 <div class="w-11 h-11 rounded-xl ${app.color} text-white font-extrabold text-sm flex items-center justify-center shrink-0 shadow-xs">
@@ -1165,11 +807,11 @@
           <!-- 팀 내부 공유 메모 영역 -->
           <div class="pt-2.5 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center gap-2">
             <span class="text-[11px] font-semibold text-indigo-600 shrink-0 flex items-center gap-1">
-              <i class="fa-regular fa-comment-dots"></i> 팀 공유 메모:
+              <i class="fa-regular fa-comment-dots"></i> 임시 메모:
             </span>
             <input type="text" value="${escapeHtml(rev.teamMemo || '')}"
               onchange="updateReviewMemo(${rev.id}, this.value)"
-              placeholder="팀원들과 공유할 이슈 원인이나 처리 내용을 입력 후 Enter..."
+              placeholder="이 화면에서 참고할 메모를 입력하세요."
               class="flex-1 text-xs px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200/80 focus:bg-white focus:border-indigo-400 focus:outline-none text-slate-700" />
           </div>
         </article>
@@ -1327,7 +969,7 @@
       const target = reviewsData.find(r => r.id === reviewId);
       if (target) {
         target.teamMemo = memoText.trim();
-        showToast('팀 공유 메모가 저장되었습니다.', 'success');
+        showToast('이 화면에 임시 메모를 반영했습니다.', 'success');
       }
     }
 
@@ -1354,7 +996,7 @@
         '리뷰내용': r.content,
         '스토어답변': r.devReply || '',
         '팀대응상태': r.teamStatus,
-        '팀공유메모': r.teamMemo || ''
+        '임시메모': r.teamMemo || ''
       }));
 
       const worksheet = XLSX.utils.json_to_sheet(rows);
@@ -1380,7 +1022,7 @@
           '리뷰내용': r.content,
           '스토어답변': r.devReply || '',
           '팀대응상태': r.teamStatus,
-          '팀공유메모': r.teamMemo || ''
+          '임시메모': r.teamMemo || ''
         };
       });
 
@@ -1392,249 +1034,6 @@
       XLSX.writeFile(workbook, `전체홈쇼핑_통합앱리뷰_${today}.xlsx`);
       showToast(`전체 홈쇼핑사 리뷰 ${rows.length}건 엑셀 다운로드 완료!`, 'success');
     }
-
-    // -----------------------------------------------------------------------
-    // 10. 관리자 인증 (로그인 / 아이디 찾기 / 비밀번호 찾기) & 사이트 추가/삭제
-    // -----------------------------------------------------------------------
-    function handleAdminButtonClick() {
-      openAdminModal();
-    }
-
-    function openAdminModal() {
-      const modal = document.getElementById('adminModal');
-      modal.classList.remove('hidden');
-
-      if (state.isAdmin) {
-        document.getElementById('adminModalTitle').textContent = '관리자 계정 관리';
-        document.getElementById('adminAuthTabs').classList.add('hidden');
-        document.getElementById('formAdminLogin').classList.add('hidden');
-        document.getElementById('formFindId').classList.add('hidden');
-        document.getElementById('formResetPw').classList.add('hidden');
-        document.getElementById('adminLoggedInPanel').classList.remove('hidden');
-        document.getElementById('loggedInEmailDisplay').textContent = ADMIN_ACCOUNT.email;
-      } else {
-        document.getElementById('adminModalTitle').textContent = '관리자 인증';
-        document.getElementById('adminAuthTabs').classList.remove('hidden');
-        document.getElementById('adminLoggedInPanel').classList.add('hidden');
-        switchAdminTab('LOGIN');
-      }
-    }
-
-    function closeAdminModal() {
-      document.getElementById('adminModal').classList.add('hidden');
-    }
-
-    function switchAdminTab(tab) {
-      ['LOGIN', 'FIND_ID', 'RESET_PW'].forEach(key => {
-        const btn = document.getElementById(`tabAdmin${key}`);
-        if (key === tab) {
-          btn.className = 'py-2.5 text-indigo-600 border-b-2 border-indigo-600 bg-white';
-        } else {
-          btn.className = 'py-2.5 text-slate-500 hover:text-slate-800';
-        }
-      });
-
-      document.getElementById('formAdminLogin').classList.toggle('hidden', tab !== 'LOGIN');
-      document.getElementById('formFindId').classList.toggle('hidden', tab !== 'FIND_ID');
-      document.getElementById('formResetPw').classList.toggle('hidden', tab !== 'RESET_PW');
-      document.getElementById('loginErrorMsg').classList.add('hidden');
-      document.getElementById('resetErrorMsg').classList.add('hidden');
-    }
-
-    function submitAdminLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmailInput').value.trim();
-      const pw = document.getElementById('loginPasswordInput').value;
-      const errEl = document.getElementById('loginErrorMsg');
-
-      if (email === ADMIN_ACCOUNT.email && pw === ADMIN_ACCOUNT.password) {
-        state.isAdmin = true;
-        errEl.classList.add('hidden');
-        closeAdminModal();
-        renderApp();
-        showToast('관리자 계정으로 로그인되었습니다.', 'success');
-      } else {
-        errEl.textContent = '아이디 또는 비밀번호가 일치하지 않습니다.';
-        errEl.classList.remove('hidden');
-      }
-    }
-
-    function logoutAdmin() {
-      state.isAdmin = false;
-      closeAdminModal();
-      renderApp();
-      showToast('관리자 로그아웃 되었습니다.');
-    }
-
-    function handleFindAdminId() {
-      const kw = document.getElementById('findIdKeyword').value.trim().toLowerCase();
-      const resBox = document.getElementById('findIdResultBox');
-      resBox.classList.remove('hidden');
-
-      if (!kw || kw.includes('홈앤쇼핑') || kw.includes('hns') || kw.includes('khojun')) {
-        resBox.innerHTML = `등록된 관리자 아이디: <strong class="font-mono underline">${ADMIN_ACCOUNT.email}</strong>`;
-      } else {
-        resBox.innerHTML = `입력하신 키워드와 일치하는 계정이 없습니다. (힌트: <strong>홈앤쇼핑</strong> 또는 <strong>hnsmall</strong>)`;
-      }
-    }
-
-    function sendVerificationCode() {
-      const email = document.getElementById('resetEmailInput').value.trim();
-      const errEl = document.getElementById('resetErrorMsg');
-
-      if (email !== ADMIN_ACCOUNT.email) {
-        errEl.textContent = '등록된 관리자 이메일 주소가 아닙니다.';
-        errEl.classList.remove('hidden');
-        return;
-      }
-
-      errEl.classList.add('hidden');
-      const code = String(Math.floor(100000 + Math.random() * 900000));
-      state.issuedResetCode = code;
-
-      document.getElementById('resetCodeSection').classList.remove('hidden');
-      document.getElementById('issuedCodeHint').innerHTML = `인증코드가 발급되었습니다: <strong class="font-mono text-sm">${code}</strong> (테스트용 즉시 표시)`;
-    }
-
-    function confirmPasswordReset() {
-      const inputCode = document.getElementById('verifyCodeInput').value.trim();
-      const newPw = document.getElementById('newPasswordInput').value;
-      const errEl = document.getElementById('resetErrorMsg');
-
-      if (!state.issuedResetCode || inputCode !== state.issuedResetCode) {
-        errEl.textContent = '인증코드가 올바르지 않습니다.';
-        errEl.classList.remove('hidden');
-        return;
-      }
-      if (!newPw || newPw.length < 4) {
-        errEl.textContent = '새 비밀번호를 4자 이상 입력해 주세요.';
-        errEl.classList.remove('hidden');
-        return;
-      }
-
-      ADMIN_ACCOUNT.password = newPw;
-      state.issuedResetCode = null;
-      errEl.classList.add('hidden');
-      showToast('비밀번호가 성공적으로 재설정되었습니다. 새 비밀번호로 로그인해 주세요.', 'success');
-      switchAdminTab('LOGIN');
-      document.getElementById('loginEmailInput').value = ADMIN_ACCOUNT.email;
-      document.getElementById('loginPasswordInput').value = '';
-    }
-
-    function updateAdminUI() {
-      const addBtn = document.getElementById('btnAddSiteHeader');
-      const adminBanner = document.getElementById('adminBanner');
-      const adminBtn = document.getElementById('btnAdminAuth');
-      const adminLabel = document.getElementById('adminBtnLabel');
-
-      if (state.isAdmin) {
-        addBtn.classList.remove('hidden');
-        if (state.currentView === 'HOME') {
-          adminBanner.classList.remove('hidden');
-          adminBanner.classList.add('flex');
-        } else {
-          adminBanner.classList.add('hidden');
-        }
-        adminBtn.className = 'inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition';
-        adminLabel.textContent = '관리자 ON';
-      } else {
-        addBtn.classList.add('hidden');
-        adminBanner.classList.add('hidden');
-        adminBtn.className = 'inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 bg-white transition';
-        adminLabel.textContent = '관리자';
-      }
-    }
-
-    // 사이트 추가 모달
-    function openAddSiteModal() {
-      if (!state.isAdmin) {
-        showToast('사이트 추가는 관리자 로그인 후 이용 가능합니다.', 'error');
-        openAdminModal();
-        return;
-      }
-      document.getElementById('addSiteModal').classList.remove('hidden');
-    }
-
-    function closeAddSiteModal() {
-      document.getElementById('addSiteModal').classList.add('hidden');
-    }
-
-    function submitAddSite(e) {
-      e.preventDefault();
-      if (!state.isAdmin) return;
-
-      const name = document.getElementById('newSiteName').value.trim();
-      const slug = document.getElementById('newSiteSlug').value.trim().toLowerCase().replace(/[^a-z0-9-_]/g, '');
-      const desc = document.getElementById('newSiteDesc').value.trim() || `${name} 모바일 앱 리뷰 스트림`;
-      const androidPkg = document.getElementById('newSiteAndroidPkg').value.trim() || `com.${slug}.app`;
-      const iosId = document.getElementById('newSiteIosId').value.trim() || 'id999999999';
-      const color = document.getElementById('newSiteColor').value;
-
-      const nextId = appsData.reduce((max, a) => Math.max(max, a.id), 0) + 1;
-      const shortCode = name.slice(0, 2).toUpperCase();
-
-      const newApp = {
-        id: nextId,
-        slug: slug || `app${nextId}`,
-        shortCode,
-        name,
-        subName: slug.toUpperCase(),
-        desc,
-        color,
-        androidPkg,
-        iosId
-      };
-
-      appsData.push(newApp);
-
-      // 신규 추가된 사이트용 초기 샘플 리뷰 6건 생성
-      const today = formatDateISO(new Date());
-      const sampleTexts = [
-        { os: 'Android', rating: 5, author: '신규유저1', content: `[${name}] 앱이 깔끔하고 상품 찾기가 정말 편리하네요!` },
-        { os: 'iOS', rating: 4, author: '신규유저2', content: `[${name}] 라이브 방송 화질이 선명하고 결제가 빠릅니다.` },
-        { os: 'Android', rating: 3, author: '신규유저3', content: `[${name}] 쿠폰함 위치가 조금 더 직관적이면 좋겠습니다.` },
-        { os: 'iOS', rating: 5, author: '신규유저4', content: `[${name}] 알림 혜택이 좋아서 자주 이용하고 있어요.` }
-      ];
-
-      sampleTexts.forEach((s, idx) => {
-        reviewsData.unshift({
-          id: Date.now() + idx,
-          appId: nextId,
-          os: s.os,
-          rating: s.rating,
-          author: s.author,
-          date: today,
-          version: '1.0.0',
-          content: s.content,
-          devReply: '',
-          teamStatus: '미확인',
-          teamMemo: ''
-        });
-      });
-
-      e.target.reset();
-      closeAddSiteModal();
-      renderApp();
-      showToast(`'${name}' 사이트가 성공적으로 추가되었습니다.`, 'success');
-    }
-
-    function deleteSite(e, appId) {
-      e.stopPropagation();
-      if (!state.isAdmin) return;
-      const target = appsData.find(a => a.id === appId);
-      if (!target) return;
-
-      appsData = appsData.filter(a => a.id !== appId);
-      reviewsData = reviewsData.filter(r => r.appId !== appId);
-
-      if (state.currentView === 'DETAIL' && state.currentAppId === appId) {
-        goHome();
-      } else {
-        renderApp();
-      }
-      showToast(`'${target.name}' 사이트가 삭제되었습니다.`);
-    }
-
     // -----------------------------------------------------------------------
     // 11. 설정 모달 제어
     // -----------------------------------------------------------------------
@@ -1665,127 +1064,49 @@
       showToast('대시보드 설정이 저장되었습니다.', 'success');
     }
 
-    // -----------------------------------------------------------------------
-    // 12. 초기화 실행
-    // -----------------------------------------------------------------------
-    // 12. 초기화 실행 및 실제 스토어 리뷰 수집 연동 (JSON + Apple RSS 실시간)
-    // -----------------------------------------------------------------------
-    async function loadSavedReviewsJson() {
-      try {
-        // GitHub Actions(scraper.py)가 생성한 reviews_data.json이 있으면 우선 로드 (Android + iOS 전체)
-        const res = await fetch(`./reviews_data.json?t=${Date.now()}`);
-        if (!res.ok) return false;
-        const json = await res.json();
-        if (Array.isArray(json.reviews) && json.reviews.length > 0) {
-          reviewsData = json.reviews;
-          return json.updatedAt || true;
-        }
-      } catch (e) {
-        // 정적 JSON 파일이 없는 경우 다음 단계(iOS 실시간 RSS)로 진행
-      }
-      return false;
-    }
-
-    async function fetchAppleAppStoreRSS(app) {
-      const numericId = String(app.iosId || '').replace(/^id/i, '').trim();
-      if (!numericId) return [];
-
-      const rssUrl = `https://itunes.apple.com/kr/rss/customerreviews/id=${numericId}/sortBy=mostRecent/json`;
-      // 브라우저 CORS 우회를 위한 공개 프록시 폴백 체인
-      const endpoints = [
-        `https://api.allorigins.win/raw?url=${encodeURIComponent(rssUrl)}`,
-        `https://corsproxy.io/?${encodeURIComponent(rssUrl)}`
-      ];
-
-      for (const endpoint of endpoints) {
-        try {
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 6000);
-          const res = await fetch(endpoint, { signal: controller.signal });
-          clearTimeout(timer);
-          if (!res.ok) continue;
-
-          const data = await res.json();
-          const entries = data?.feed?.entry || [];
-          const reviewEntries = Array.isArray(entries) ? entries.filter(e => e['im:rating']) : [];
-
-          return reviewEntries.map((entry, idx) => {
-            const rawDate = entry.updated?.label || new Date().toISOString();
-            const title = entry.title?.label || '';
-            const body = entry.content?.label || '';
-            return {
-              id: Number(`${app.id}9${idx}${String(entry.id?.label || idx).slice(-4)}`),
-              appId: app.id,
-              os: 'iOS',
-              rating: parseInt(entry['im:rating']?.label || '5', 10),
-              author: entry.author?.name?.label || 'App Store 사용자',
-              date: rawDate.slice(0, 10),
-              version: entry['im:version']?.label || '-',
-              content: title ? `[${title}] ${body}` : body,
-              devReply: '',
-              teamStatus: '미확인',
-              teamMemo: ''
-            };
-          });
-        } catch (err) {
-          // 다음 프록시로 재시도
-        }
-      }
-      return [];
-    }
-
     async function syncRealStoreReviews(isManual = false) {
-      const syncIcon = document.getElementById('syncIcon');
-      const statusDot = document.getElementById('liveStatusDot');
-      const statusText = document.getElementById('liveStatusText');
-      const timeText = document.getElementById('lastSyncTimeText');
+      const icon = document.getElementById('syncIcon');
+      const button = document.getElementById('btnSyncLive');
+      const dot = document.getElementById('liveStatusDot');
+      const status = document.getElementById('liveStatusText');
+      const time = document.getElementById('lastSyncTimeText');
 
-      if (syncIcon) syncIcon.classList.add('fa-spin');
-      if (statusText) statusText.textContent = 'Google Play / Apple App Store 실제 리뷰 데이터를 동기화하는 중...';
-
-      // 1단계: 백엔드 자동수집기(scraper.py)가 생성한 reviews_data.json 확인
-      const jsonUpdated = await loadSavedReviewsJson();
-      if (jsonUpdated) {
-        if (syncIcon) syncIcon.classList.remove('fa-spin');
-        if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-        if (statusText) statusText.innerHTML = `<strong class="text-emerald-700">실제 스토어 수집 데이터(Android + iOS)</strong> 연동 완료 (총 ${reviewsData.length}건)`;
-        if (timeText) timeText.textContent = typeof jsonUpdated === 'string' ? `최종 수집: ${jsonUpdated}` : '';
-        renderApp();
-        if (isManual) showToast('Android & iOS 실제 스토어 리뷰 동기화가 완료되었습니다.', 'success');
-        return;
-      }
-
-      // 2단계: JSON 파일이 없을 경우 Apple App Store 공식 RSS 피드에서 실시간 수집
+      button.disabled = true;
+      icon.classList.add('fa-spin');
+      status.textContent = '최근 수집한 스토어 리뷰를 불러오는 중입니다.';
       try {
-        const results = await Promise.all(appsData.map(app => fetchAppleAppStoreRSS(app)));
-        const liveIosReviews = results.flat();
-
-        if (liveIosReviews.length > 0) {
-          // 기존 샘플 데이터 중 iOS 항목을 실제 App Store 리뷰로 교체
-          const androidOnly = reviewsData.filter(r => r.os === 'Android');
-          reviewsData = [...liveIosReviews, ...androidOnly];
-
-          if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500';
-          if (statusText) {
-            statusText.innerHTML = `<strong class="text-emerald-700">Apple App Store(iOS) 실시간 리뷰 ${liveIosReviews.length}건</strong> 수집 완료 · Android는 자동수집기 연동 시 실시간 반영`;
-          }
-          if (timeText) timeText.textContent = `실시간 조회: ${new Date().toLocaleTimeString('ko-KR')}`;
-          renderApp();
-          if (isManual) showToast(`App Store 실제 리뷰 ${liveIosReviews.length}건을 실시간으로 불러왔습니다!`, 'success');
-        } else {
-          if (statusDot) statusDot.className = 'w-2 h-2 rounded-full bg-amber-400';
-          if (statusText) statusText.textContent = '기본 샘플 데이터 표시 중 (네트워크/프록시 응답 지연 시 자동 전환)';
-          if (isManual) showToast('실시간 스토어 프록시 응답이 지연되어 기존 데이터를 유지합니다.', 'info');
+        const response = await fetch('./reviews_data.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error('Review data is unavailable');
+        const data = await response.json();
+        if (!Array.isArray(data.apps) || !Array.isArray(data.reviews)) {
+          throw new Error('Invalid review data');
         }
+        const previous = new Map(reviewsData.map(review => [review.id, review]));
+        appsData = data.apps;
+        reviewsData = data.reviews.map(review => {
+          const prior = previous.get(review.id);
+          return prior ? { ...review, teamStatus: prior.teamStatus, teamMemo: prior.teamMemo } : review;
+        });
+        const failed = data.errors || [];
+        dot.className = 'w-2 h-2 rounded-full ' + (failed.length ? 'bg-amber-400' : 'bg-emerald-500');
+        status.textContent = '스토어 리뷰 ' + reviewsData.length.toLocaleString('ko-KR') + '건';
+        if (failed.length) status.textContent += ' · 이번 수집 실패: ' + failed.join(', ');
+        time.textContent = data.updatedAt ? '최종 수집: ' + data.updatedAt : '';
+        parseHashRoute();
+        if (isManual) showToast('최근 수집 결과를 불러왔습니다.', 'success');
+      } catch (error) {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        status.textContent = '리뷰 데이터를 불러오지 못했습니다.';
+        if (isManual) showToast('잠시 후 다시 시도해 주세요.', 'error');
       } finally {
-        if (syncIcon) syncIcon.classList.remove('fa-spin');
+        button.disabled = false;
+        icon.classList.remove('fa-spin');
       }
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      generateInitialReviews();
       parseHashRoute();
-      syncRealStoreReviews(false);
+      syncRealStoreReviews();
     });
   </script>
 </body>
