@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-26 09:54:41 KST",
+  "updatedAt": "2026-11-26 14:53:26 KST",
   "startDate": "2025-01-01",
-  "totalCount": 23076,
+  "totalCount": 23079,
   "apps": [
     {
       "id": 1,
@@ -16,9 +16,9 @@
       "storeListings": {
         "Android": {
           "title": "GS SHOP",
-          "rating": 4.7906556,
+          "rating": 4.790746,
           "minDownloads": 10000000,
-          "ratingCount": 597439,
+          "ratingCount": 597467,
           "updatedOn": "2026-11-23"
         },
         "iOS": {
@@ -44,9 +44,9 @@
       "storeListings": {
         "Android": {
           "title": "CJ온스타일",
-          "rating": 4.7987485,
+          "rating": 4.798846,
           "minDownloads": 10000000,
-          "ratingCount": 340739,
+          "ratingCount": 340750,
           "updatedOn": "2026-11-19"
         },
         "iOS": {
@@ -72,9 +72,9 @@
       "storeListings": {
         "Android": {
           "title": "현대홈쇼핑",
-          "rating": 4.68088,
+          "rating": 4.681596,
           "minDownloads": 10000000,
-          "ratingCount": 99339,
+          "ratingCount": 99365,
           "updatedOn": "2026-10-26"
         },
         "iOS": {
@@ -100,9 +100,9 @@
       "storeListings": {
         "Android": {
           "title": "롯데홈쇼핑",
-          "rating": 4.744118,
+          "rating": 4.7440586,
           "minDownloads": 10000000,
-          "ratingCount": 257308,
+          "ratingCount": 257310,
           "updatedOn": "2026-09-29"
         },
         "iOS": {
@@ -156,9 +156,9 @@
       "storeListings": {
         "Android": {
           "title": "NS홈쇼핑",
-          "rating": 4.757712,
+          "rating": 4.757702,
           "minDownloads": 10000000,
-          "ratingCount": 285613,
+          "ratingCount": 285616,
           "updatedOn": "2026-11-16"
         },
         "iOS": {
@@ -184,7 +184,7 @@
       "storeListings": {
         "Android": {
           "title": "공영쇼핑 - 공영홈쇼핑",
-          "rating": 3.9567757,
+          "rating": 3.9671748,
           "minDownloads": 5000000,
           "ratingCount": 9076,
           "updatedOn": "2026-09-22"
@@ -202,6 +202,18 @@
   ],
   "reviews": [
     {
+      "id": 250492502951248,
+      "appId": 3,
+      "os": "Android",
+      "rating": 5,
+      "author": "정림",
+      "date": "2026-11-25",
+      "version": "7.1.5",
+      "content": "매우만족",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 231720978635122,
       "appId": 6,
       "os": "Android",
@@ -214,6 +226,18 @@
       "teamStatus": "미확인"
     },
     {
+      "id": 223165959130939,
+      "appId": 6,
+      "os": "Android",
+      "rating": 5,
+      "author": "이현자",
+      "date": "2026-11-25",
+      "version": "5.10.2",
+      "content": "내가 써보니 너무 좋아서 친정 엄마껏 주문해요~~ 주말에 전라도에 김장하러 가는데 엄마 갖다 드리려고 주문합니다.짱짱 편해요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 217115812276055,
       "appId": 6,
       "os": "Android",
@@ -222,6 +246,18 @@
       "date": "2026-11-25",
       "version": "5.10.2",
       "content": "좋은제품 회원들에게 쿠폰가로 구매할수있도록 해주세요~^^",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 172056424438072,
+      "appId": 3,
+      "os": "Android",
+      "rating": 5,
+      "author": "정경아",
+      "date": "2026-11-25",
+      "version": "7.1.7",
+      "content": "좋다는말을많이들었요잘써볼게요",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -282,8 +318,8 @@
       "date": "2026-11-24",
       "version": "2.3.12",
       "content": "공영 농산물 가격 착해서 계속 구매하고 있어요! 품질도 좋고 맘에듭니다. 👍",
-      "devReply": "",
-      "teamStatus": "미확인"
+      "devReply": "안녕하세요. 고객님 공영쇼핑 담당자입니다. 앞으로도 품질및 가격에 신경쓰는 공영쇼핑이 되도록 노력하겠습니다.\n이용해주셔서 감사합니다.",
+      "teamStatus": "답변완료"
     },
     {
       "id": 252062874631109,
@@ -277133,7 +277169,7 @@
       "backfillOldestSeen": "2025-10-11",
       "backfillEnd": "page_limit",
       "lastSuccess": "2026-11-26",
-      "status": "cutoff"
+      "status": "failed"
     },
     {
       "appId": 2,
@@ -277153,12 +277189,12 @@
       "backfillOldestSeen": "2024-08-19",
       "backfillEnd": "cutoff",
       "lastSuccess": "2026-11-26",
-      "status": "cutoff"
+      "status": "failed"
     },
     {
       "appId": 3,
       "os": "Android",
-      "count": 3318,
+      "count": 3320,
       "earliestDate": "2025-01-04",
       "backfillOldestSeen": "2024-10-27",
       "backfillEnd": "cutoff",
@@ -277173,7 +277209,7 @@
       "backfillOldestSeen": "2024-08-31",
       "backfillEnd": "cutoff",
       "lastSuccess": "2026-11-26",
-      "status": "cutoff"
+      "status": "failed"
     },
     {
       "appId": 4,
@@ -277193,7 +277229,7 @@
       "backfillOldestSeen": "2024-12-03",
       "backfillEnd": "cutoff",
       "lastSuccess": "2026-11-26",
-      "status": "cutoff"
+      "status": "failed"
     },
     {
       "appId": 5,
@@ -277213,12 +277249,12 @@
       "backfillOldestSeen": "2022-06-10",
       "backfillEnd": "cutoff",
       "lastSuccess": "2026-11-26",
-      "status": "cutoff"
+      "status": "failed"
     },
     {
       "appId": 6,
       "os": "Android",
-      "count": 3237,
+      "count": 3238,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-02",
       "backfillEnd": "cutoff",
@@ -277233,7 +277269,7 @@
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
       "lastSuccess": "2026-11-26",
-      "status": "cutoff"
+      "status": "failed"
     },
     {
       "appId": 7,
@@ -277253,8 +277289,16 @@
       "backfillOldestSeen": "2022-02-07",
       "backfillEnd": "cutoff",
       "lastSuccess": "2026-11-26",
-      "status": "cutoff"
+      "status": "failed"
     }
   ],
-  "errors": []
+  "errors": [
+    "GS홈쇼핑 iOS",
+    "CJ온스타일 iOS",
+    "현대홈쇼핑 iOS",
+    "롯데홈쇼핑 iOS",
+    "홈앤쇼핑 iOS",
+    "NS홈쇼핑 iOS",
+    "공영홈쇼핑 iOS"
+  ]
 }
