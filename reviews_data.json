@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-25 22:37:30 KST",
+  "updatedAt": "2026-11-26 09:54:41 KST",
   "startDate": "2025-01-01",
-  "totalCount": 23062,
+  "totalCount": 23076,
   "apps": [
     {
       "id": 1,
@@ -16,10 +16,10 @@
       "storeListings": {
         "Android": {
           "title": "GS SHOP",
-          "rating": 4.79064,
+          "rating": 4.7906556,
           "minDownloads": 10000000,
-          "ratingCount": 597387,
-          "updatedOn": "2026-11-18"
+          "ratingCount": 597439,
+          "updatedOn": "2026-11-23"
         },
         "iOS": {
           "title": "GS SHOP",
@@ -44,9 +44,9 @@
       "storeListings": {
         "Android": {
           "title": "CJ온스타일",
-          "rating": 4.7987237,
+          "rating": 4.7987485,
           "minDownloads": 10000000,
-          "ratingCount": 340730,
+          "ratingCount": 340739,
           "updatedOn": "2026-11-19"
         },
         "iOS": {
@@ -72,9 +72,9 @@
       "storeListings": {
         "Android": {
           "title": "현대홈쇼핑",
-          "rating": 4.6809397,
+          "rating": 4.68088,
           "minDownloads": 10000000,
-          "ratingCount": 99297,
+          "ratingCount": 99339,
           "updatedOn": "2026-10-26"
         },
         "iOS": {
@@ -100,9 +100,9 @@
       "storeListings": {
         "Android": {
           "title": "롯데홈쇼핑",
-          "rating": 4.7441163,
+          "rating": 4.744118,
           "minDownloads": 10000000,
-          "ratingCount": 257300,
+          "ratingCount": 257308,
           "updatedOn": "2026-09-29"
         },
         "iOS": {
@@ -128,9 +128,9 @@
       "storeListings": {
         "Android": {
           "title": "홈앤쇼핑 - 깐깐함이 찾은 정답, 홈앤쇼핑",
-          "rating": 4.4617376,
+          "rating": 4.461884,
           "minDownloads": 10000000,
-          "ratingCount": 95780,
+          "ratingCount": 95782,
           "updatedOn": "2026-11-18"
         },
         "iOS": {
@@ -156,9 +156,9 @@
       "storeListings": {
         "Android": {
           "title": "NS홈쇼핑",
-          "rating": 4.757611,
+          "rating": 4.757712,
           "minDownloads": 10000000,
-          "ratingCount": 285589,
+          "ratingCount": 285613,
           "updatedOn": "2026-11-16"
         },
         "iOS": {
@@ -201,6 +201,66 @@
     }
   ],
   "reviews": [
+    {
+      "id": 231720978635122,
+      "appId": 6,
+      "os": "Android",
+      "rating": 5,
+      "author": "고성환",
+      "date": "2026-11-25",
+      "version": "5.10.2",
+      "content": "품질좋은 제품과 건강한 음식 재료를 저렴하게 구매할수 있어 좋아요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 217115812276055,
+      "appId": 6,
+      "os": "Android",
+      "rating": 5,
+      "author": "윤호용",
+      "date": "2026-11-25",
+      "version": "5.10.2",
+      "content": "좋은제품 회원들에게 쿠폰가로 구매할수있도록 해주세요~^^",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 152361593481798,
+      "appId": 3,
+      "os": "Android",
+      "rating": 1,
+      "author": "윤치성",
+      "date": "2026-11-25",
+      "version": "7.1.7",
+      "content": "살수율20%고 완전 방송과 다름니다 이렇게 살없는거는 처음 먹어봄",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 116703979284978,
+      "appId": 3,
+      "os": "Android",
+      "rating": 5,
+      "author": "박명순",
+      "date": "2026-11-25",
+      "version": "7.1.7",
+      "content": "너무 예쁘고 얇은 티셔츠를 입고 착용했는데 바람도 많이불고 엄청추운 날씨인데 너무 너무 따뜻해요. 목단추까지 채웟더니 바람도 완벽차단. 굿입니다.",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 66053351554196,
+      "appId": 5,
+      "os": "Android",
+      "rating": 5,
+      "author": "이지원",
+      "date": "2026-11-25",
+      "version": "-",
+      "content": "나이 곳 70대인데 현영씨가 넘이뻐서 믿고구매합니다 ㅎㅎ",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
     {
       "id": 277555373236560,
       "appId": 1,
@@ -246,6 +306,30 @@
       "date": "2026-11-24",
       "version": "5.10.2",
       "content": "빅마마님 상품은 너무 맛있어요 감사합니다 ^^",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 239486009368036,
+      "appId": 1,
+      "os": "Android",
+      "rating": 3,
+      "author": "금계순",
+      "date": "2026-11-24",
+      "version": "9.3.7",
+      "content": "벨뷰 이태리 램스킨너무예쁘네요 따뜻해부여서하나삿어요 잘입을것같네요^^",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 223271982257737,
+      "appId": 3,
+      "os": "iOS",
+      "rating": 5,
+      "author": "거창댁",
+      "date": "2026-11-24",
+      "version": "4.0.5",
+      "content": "[서리태] 품질도 우수하고 맛있어요",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -310,6 +394,42 @@
       "teamStatus": "미확인"
     },
     {
+      "id": 145602673172917,
+      "appId": 6,
+      "os": "Android",
+      "rating": 5,
+      "author": "박은영",
+      "date": "2026-11-24",
+      "version": "5.10.2",
+      "content": "역시 베네통은 칼라펄하네요 겨울 운동시 잘입을것 같아 주문했어요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 144254432701113,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "조미숙",
+      "date": "2026-11-24",
+      "version": "9.3.51",
+      "content": "올리브카키좀 입어주세요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 138723390599497,
+      "appId": 6,
+      "os": "Android",
+      "rating": 5,
+      "author": "박미경",
+      "date": "2026-11-24",
+      "version": "5.10.2",
+      "content": "패딩 바지 찾다가 원하는 바지 바로 구매 합니다",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 129776044789013,
       "appId": 3,
       "os": "Android",
@@ -330,6 +450,18 @@
       "date": "2026-11-24",
       "version": "7.1.7",
       "content": "기억이 잘 안난다고 했는데 복용하고는 머리가 많이 맑아진것같다고 좋아함",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 106101145365725,
+      "appId": 3,
+      "os": "Android",
+      "rating": 2,
+      "author": "황나현",
+      "date": "2026-11-24",
+      "version": "7.1.7",
+      "content": "꼭 필요한 사이즈에 너무 맘에 드는 디자인이라 바로 구매했어요",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -358,6 +490,30 @@
       "teamStatus": "미확인"
     },
     {
+      "id": 86624312878544,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "이교숙",
+      "date": "2026-11-24",
+      "version": "9.3.51",
+      "content": "가죽 질감이 부드럽고 예뻐보여요. 쇼콜라에 차콜이예쁠것 같아요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 85693689302390,
+      "appId": 3,
+      "os": "iOS",
+      "rating": 5,
+      "author": "Oringlim",
+      "date": "2026-11-24",
+      "version": "4.0.5",
+      "content": "[좋은 구성] 좋은 제품으로 선정해서\n잘 이용하고 있습니다\n\n늘 감사합니다",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 84996792910178,
       "appId": 1,
       "os": "Android",
@@ -378,6 +534,18 @@
       "date": "2026-11-24",
       "version": "9.3.51",
       "content": "구성이 너무 좋아요♡♡♡♡",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 83949011869183,
+      "appId": 6,
+      "os": "iOS",
+      "rating": 5,
+      "author": "king0000000009",
+      "date": "2026-11-24",
+      "version": "5.10.2",
+      "content": "[굿입니다~] 아주 좋아요~~~~~~",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -276950,11 +277118,11 @@
     {
       "appId": 1,
       "os": "Android",
-      "count": 10181,
+      "count": 10184,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -276964,7 +277132,7 @@
       "earliestDate": "2025-10-11",
       "backfillOldestSeen": "2025-10-11",
       "backfillEnd": "page_limit",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -276974,7 +277142,7 @@
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-10-25",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -276984,27 +277152,27 @@
       "earliestDate": "2025-01-11",
       "backfillOldestSeen": "2024-08-19",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
       "appId": 3,
       "os": "Android",
-      "count": 3315,
+      "count": 3318,
       "earliestDate": "2025-01-04",
       "backfillOldestSeen": "2024-10-27",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
       "appId": 3,
       "os": "iOS",
-      "count": 441,
+      "count": 443,
       "earliestDate": "2025-01-06",
       "backfillOldestSeen": "2024-08-31",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -277014,7 +277182,7 @@
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-04",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -277024,17 +277192,17 @@
       "earliestDate": "2025-01-09",
       "backfillOldestSeen": "2024-12-03",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
       "appId": 5,
       "os": "Android",
-      "count": 243,
+      "count": 244,
       "earliestDate": "2025-01-03",
       "backfillOldestSeen": "2024-06-19",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -277044,27 +277212,27 @@
       "earliestDate": "2025-01-04",
       "backfillOldestSeen": "2022-06-10",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
       "appId": 6,
       "os": "Android",
-      "count": 3233,
+      "count": 3237,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-02",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
       "appId": 6,
       "os": "iOS",
-      "count": 348,
+      "count": 349,
       "earliestDate": "2025-01-02",
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -277074,7 +277242,7 @@
       "earliestDate": "2025-01-10",
       "backfillOldestSeen": "2024-02-28",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     },
     {
@@ -277084,7 +277252,7 @@
       "earliestDate": "2025-05-13",
       "backfillOldestSeen": "2022-02-07",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-25",
+      "lastSuccess": "2026-11-26",
       "status": "cutoff"
     }
   ],
