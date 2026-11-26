@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-26 14:53:26 KST",
+  "updatedAt": "2026-11-26 18:59:00 KST",
   "startDate": "2025-01-01",
-  "totalCount": 23079,
+  "totalCount": 23082,
   "apps": [
     {
       "id": 1,
@@ -16,9 +16,9 @@
       "storeListings": {
         "Android": {
           "title": "GS SHOP",
-          "rating": 4.790746,
+          "rating": 4.790649,
           "minDownloads": 10000000,
-          "ratingCount": 597467,
+          "ratingCount": 597503,
           "updatedOn": "2026-11-23"
         },
         "iOS": {
@@ -44,10 +44,10 @@
       "storeListings": {
         "Android": {
           "title": "CJ온스타일",
-          "rating": 4.798846,
+          "rating": 4.798852,
           "minDownloads": 10000000,
-          "ratingCount": 340750,
-          "updatedOn": "2026-11-19"
+          "ratingCount": 340756,
+          "updatedOn": "2026-11-26"
         },
         "iOS": {
           "title": "CJ온스타일",
@@ -72,9 +72,9 @@
       "storeListings": {
         "Android": {
           "title": "현대홈쇼핑",
-          "rating": 4.681596,
+          "rating": 4.681978,
           "minDownloads": 10000000,
-          "ratingCount": 99365,
+          "ratingCount": 99385,
           "updatedOn": "2026-10-26"
         },
         "iOS": {
@@ -100,9 +100,9 @@
       "storeListings": {
         "Android": {
           "title": "롯데홈쇼핑",
-          "rating": 4.7440586,
+          "rating": 4.7441416,
           "minDownloads": 10000000,
-          "ratingCount": 257310,
+          "ratingCount": 257322,
           "updatedOn": "2026-09-29"
         },
         "iOS": {
@@ -156,16 +156,16 @@
       "storeListings": {
         "Android": {
           "title": "NS홈쇼핑",
-          "rating": 4.757702,
+          "rating": 4.757482,
           "minDownloads": 10000000,
-          "ratingCount": 285616,
+          "ratingCount": 285632,
           "updatedOn": "2026-11-16"
         },
         "iOS": {
           "title": "NS홈쇼핑",
           "subtitle": "쇼핑",
           "rating": 4.7,
-          "ratingCount": 67054,
+          "ratingCount": 67061,
           "ratingCountLabel": "6.7만개의 평가",
           "updatedOn": "2026-11-16"
         }
@@ -222,6 +222,18 @@
       "date": "2026-11-25",
       "version": "5.10.2",
       "content": "품질좋은 제품과 건강한 음식 재료를 저렴하게 구매할수 있어 좋아요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 223422981410781,
+      "appId": 6,
+      "os": "Android",
+      "rating": 4,
+      "author": "이은숙",
+      "date": "2026-11-25",
+      "version": "5.10.2",
+      "content": "항상저렴한가격ㅇ니ㅣ 좋은상품",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -294,6 +306,30 @@
       "date": "2026-11-25",
       "version": "-",
       "content": "나이 곳 70대인데 현영씨가 넘이뻐서 믿고구매합니다 ㅎㅎ",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 54813401848939,
+      "appId": 3,
+      "os": "Android",
+      "rating": 5,
+      "author": "이근재",
+      "date": "2026-11-25",
+      "version": "7.1.7",
+      "content": "방송보고 구매하고 하루만에 도착했어요.맛도 좋고 싸게 잘 산것 같습니다.",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 9470139161313,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "김양선",
+      "date": "2026-11-25",
+      "version": "8.2.9",
+      "content": "착용감이 좋고 가슴라인이 이뻐서 매우 만족합니다",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -277154,7 +277190,7 @@
     {
       "appId": 1,
       "os": "Android",
-      "count": 10184,
+      "count": 10185,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
@@ -277194,7 +277230,7 @@
     {
       "appId": 3,
       "os": "Android",
-      "count": 3320,
+      "count": 3321,
       "earliestDate": "2025-01-04",
       "backfillOldestSeen": "2024-10-27",
       "backfillEnd": "cutoff",
@@ -277254,7 +277290,7 @@
     {
       "appId": 6,
       "os": "Android",
-      "count": 3238,
+      "count": 3239,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-02",
       "backfillEnd": "cutoff",
