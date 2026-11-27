@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-26 18:59:00 KST",
+  "updatedAt": "2026-11-27 09:57:39 KST",
   "startDate": "2025-01-01",
-  "totalCount": 23082,
+  "totalCount": 23096,
   "apps": [
     {
       "id": 1,
@@ -16,18 +16,18 @@
       "storeListings": {
         "Android": {
           "title": "GS SHOP",
-          "rating": 4.790649,
+          "rating": 4.7904105,
           "minDownloads": 10000000,
-          "ratingCount": 597503,
+          "ratingCount": 597610,
           "updatedOn": "2026-11-23"
         },
         "iOS": {
           "title": "GS SHOP",
           "subtitle": "당신의 가장 좋은 선택을 만듭니다.",
           "rating": 4.8,
-          "ratingCount": 189992,
+          "ratingCount": 190067,
           "ratingCountLabel": "19만개의 평가",
-          "updatedOn": "2026-11-19"
+          "updatedOn": "2026-11-26"
         }
       }
     },
@@ -44,16 +44,16 @@
       "storeListings": {
         "Android": {
           "title": "CJ온스타일",
-          "rating": 4.798852,
+          "rating": 4.7989388,
           "minDownloads": 10000000,
-          "ratingCount": 340756,
+          "ratingCount": 340774,
           "updatedOn": "2026-11-26"
         },
         "iOS": {
           "title": "CJ온스타일",
           "subtitle": "취향공감 라이브쇼핑, CJ온스타일",
           "rating": 4.8,
-          "ratingCount": 87866,
+          "ratingCount": 87878,
           "ratingCountLabel": "8.8만개의 평가",
           "updatedOn": "2026-11-17"
         }
@@ -72,16 +72,16 @@
       "storeListings": {
         "Android": {
           "title": "현대홈쇼핑",
-          "rating": 4.681978,
+          "rating": 4.681557,
           "minDownloads": 10000000,
-          "ratingCount": 99385,
+          "ratingCount": 99455,
           "updatedOn": "2026-10-26"
         },
         "iOS": {
           "title": "현대홈쇼핑",
           "subtitle": "당신의 모든 취향을 읽다. 현대Hmall",
           "rating": 4.5,
-          "ratingCount": 20994,
+          "ratingCount": 21047,
           "ratingCountLabel": "2.1만개의 평가",
           "updatedOn": "2026-10-29"
         }
@@ -100,16 +100,16 @@
       "storeListings": {
         "Android": {
           "title": "롯데홈쇼핑",
-          "rating": 4.7441416,
+          "rating": 4.744093,
           "minDownloads": 10000000,
-          "ratingCount": 257322,
+          "ratingCount": 257341,
           "updatedOn": "2026-09-29"
         },
         "iOS": {
           "title": "롯데홈쇼핑",
           "subtitle": "새로운 일상의 시작",
           "rating": 4.7,
-          "ratingCount": 101594,
+          "ratingCount": 101608,
           "ratingCountLabel": "10만개의 평가",
           "updatedOn": "2026-10-01"
         }
@@ -130,7 +130,7 @@
           "title": "홈앤쇼핑 - 깐깐함이 찾은 정답, 홈앤쇼핑",
           "rating": 4.461884,
           "minDownloads": 10000000,
-          "ratingCount": 95782,
+          "ratingCount": 95770,
           "updatedOn": "2026-11-18"
         },
         "iOS": {
@@ -156,16 +156,16 @@
       "storeListings": {
         "Android": {
           "title": "NS홈쇼핑",
-          "rating": 4.757482,
+          "rating": 4.7572556,
           "minDownloads": 10000000,
-          "ratingCount": 285632,
+          "ratingCount": 285665,
           "updatedOn": "2026-11-16"
         },
         "iOS": {
           "title": "NS홈쇼핑",
           "subtitle": "쇼핑",
           "rating": 4.7,
-          "ratingCount": 67061,
+          "ratingCount": 67067,
           "ratingCountLabel": "6.7만개의 평가",
           "updatedOn": "2026-11-16"
         }
@@ -186,14 +186,14 @@
           "title": "공영쇼핑 - 공영홈쇼핑",
           "rating": 3.9671748,
           "minDownloads": 5000000,
-          "ratingCount": 9076,
+          "ratingCount": 9075,
           "updatedOn": "2026-09-22"
         },
         "iOS": {
           "title": "공영쇼핑 - 공영홈쇼핑",
           "subtitle": "쇼핑",
           "rating": 4.3,
-          "ratingCount": 1870,
+          "ratingCount": 1871,
           "ratingCountLabel": "1.9천개의 평가",
           "updatedOn": "2026-11-09"
         }
@@ -201,6 +201,114 @@
     }
   ],
   "reviews": [
+    {
+      "id": 273322865253471,
+      "appId": 4,
+      "os": "Android",
+      "rating": 5,
+      "author": "shinkyle222",
+      "date": "2026-11-26",
+      "version": "4.3.6",
+      "content": "색상이부드럽고예쁘네요.좋은제품 구매 해서 너무좋아요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 202521014534303,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "최영미",
+      "date": "2026-11-26",
+      "version": "9.3.51",
+      "content": "신발예쁘고 정말로편해요~~오랬동안신어도 발이안아파요^^",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 177974723256820,
+      "appId": 4,
+      "os": "Android",
+      "rating": 4,
+      "author": "최성미",
+      "date": "2026-11-26",
+      "version": "4.3.6",
+      "content": "너무 편해서. 재주문했습니다",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 131988595413431,
+      "appId": 2,
+      "os": "Android",
+      "rating": 5,
+      "author": "곽순도",
+      "date": "2026-11-26",
+      "version": "9.1.2",
+      "content": "아랑님 친절히 설명 잘해주셔서 엄청 도움되네요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 118183219884827,
+      "appId": 1,
+      "os": "Android",
+      "rating": 2,
+      "author": "레온하트",
+      "date": "2026-11-26",
+      "version": "9.3.51",
+      "content": "할인율이 높은 것도 아니고 그닥 살만한 게 없어요.",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 15536657182628,
+      "appId": 4,
+      "os": "Android",
+      "rating": 5,
+      "author": "이성진",
+      "date": "2026-11-26",
+      "version": "4.3.6",
+      "content": "진짜 원하던 팬티여서 바꾸려고 구매합니다",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 801399166587,
+      "appId": 4,
+      "os": "Android",
+      "rating": 5,
+      "author": "안숙희",
+      "date": "2026-11-26",
+      "version": "-",
+      "content": "색상도 예쁘고 질감이 더 좋아보여서 보는순간 선택하게 되네요 팬티 색상이 넘 예뻐서 사고 싶었어요^^",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 278427963175996,
+      "appId": 3,
+      "os": "iOS",
+      "rating": 3,
+      "author": "모모구💕",
+      "date": "2026-11-25",
+      "version": "4.0.5",
+      "content": "[쿡셀] 너무  잘쓰고 있어요  싸게  잘 구매한것같아요   \n어머님께도  선물해드릴려구요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 251794792790918,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "Don Ho",
+      "date": "2026-11-25",
+      "version": "9.3.51",
+      "content": "좋아요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
     {
       "id": 250492502951248,
       "appId": 3,
@@ -222,6 +330,18 @@
       "date": "2026-11-25",
       "version": "5.10.2",
       "content": "품질좋은 제품과 건강한 음식 재료를 저렴하게 구매할수 있어 좋아요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 228563070143617,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "최미선",
+      "date": "2026-11-25",
+      "version": "9.3.51",
+      "content": "따뜻하고 편할것 같아요",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -262,6 +382,18 @@
       "teamStatus": "미확인"
     },
     {
+      "id": 202776418532923,
+      "appId": 2,
+      "os": "Android",
+      "rating": 5,
+      "author": "이영희",
+      "date": "2026-11-25",
+      "version": "9.1.2",
+      "content": "부드럽고 좋아요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 172056424438072,
       "appId": 3,
       "os": "Android",
@@ -298,6 +430,18 @@
       "teamStatus": "미확인"
     },
     {
+      "id": 89203342421199,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "허경숙",
+      "date": "2026-11-25",
+      "version": "9.3.51",
+      "content": "편할거 같고 신고 벗기가 좋아서 너무 너무 마음이 가네🫢요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 66053351554196,
       "appId": 5,
       "os": "Android",
@@ -322,6 +466,18 @@
       "teamStatus": "미확인"
     },
     {
+      "id": 24456871316875,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "박정희",
+      "date": "2026-11-25",
+      "version": "9.3.51",
+      "content": "쵸코브라운 샀어요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 9470139161313,
       "appId": 1,
       "os": "Android",
@@ -330,6 +486,18 @@
       "date": "2026-11-25",
       "version": "8.2.9",
       "content": "착용감이 좋고 가슴라인이 이뻐서 매우 만족합니다",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 5501099236603,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "조숙자",
+      "date": "2026-11-25",
+      "version": "9.3.51",
+      "content": "딱 보는 순간 엄마 생각이 절로나네요 엄마는 나를 위해 평생 준비해 준 신발을 이제 나는 엄마에게 좋은 신발을 신겨 드리려고요",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -277190,11 +277358,11 @@
     {
       "appId": 1,
       "os": "Android",
-      "count": 10185,
+      "count": 10192,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
+      "lastSuccess": "2026-11-27",
       "status": "cutoff"
     },
     {
@@ -277204,17 +277372,17 @@
       "earliestDate": "2025-10-11",
       "backfillOldestSeen": "2025-10-11",
       "backfillEnd": "page_limit",
-      "lastSuccess": "2026-11-26",
-      "status": "failed"
+      "lastSuccess": "2026-11-27",
+      "status": "cutoff"
     },
     {
       "appId": 2,
       "os": "Android",
-      "count": 1644,
+      "count": 1646,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-10-25",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
+      "lastSuccess": "2026-11-27",
       "status": "cutoff"
     },
     {
@@ -277224,8 +277392,8 @@
       "earliestDate": "2025-01-11",
       "backfillOldestSeen": "2024-08-19",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
-      "status": "failed"
+      "lastSuccess": "2026-11-27",
+      "status": "cutoff"
     },
     {
       "appId": 3,
@@ -277234,27 +277402,27 @@
       "earliestDate": "2025-01-04",
       "backfillOldestSeen": "2024-10-27",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
+      "lastSuccess": "2026-11-27",
       "status": "cutoff"
     },
     {
       "appId": 3,
       "os": "iOS",
-      "count": 443,
+      "count": 444,
       "earliestDate": "2025-01-06",
       "backfillOldestSeen": "2024-08-31",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
-      "status": "failed"
+      "lastSuccess": "2026-11-27",
+      "status": "cutoff"
     },
     {
       "appId": 4,
       "os": "Android",
-      "count": 2643,
+      "count": 2647,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-04",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
+      "lastSuccess": "2026-11-27",
       "status": "cutoff"
     },
     {
@@ -277264,8 +277432,8 @@
       "earliestDate": "2025-01-09",
       "backfillOldestSeen": "2024-12-03",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
-      "status": "failed"
+      "lastSuccess": "2026-11-27",
+      "status": "cutoff"
     },
     {
       "appId": 5,
@@ -277274,7 +277442,7 @@
       "earliestDate": "2025-01-03",
       "backfillOldestSeen": "2024-06-19",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
+      "lastSuccess": "2026-11-27",
       "status": "cutoff"
     },
     {
@@ -277284,8 +277452,8 @@
       "earliestDate": "2025-01-04",
       "backfillOldestSeen": "2022-06-10",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
-      "status": "failed"
+      "lastSuccess": "2026-11-27",
+      "status": "cutoff"
     },
     {
       "appId": 6,
@@ -277294,7 +277462,7 @@
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-02",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
+      "lastSuccess": "2026-11-27",
       "status": "cutoff"
     },
     {
@@ -277304,8 +277472,8 @@
       "earliestDate": "2025-01-02",
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
-      "status": "failed"
+      "lastSuccess": "2026-11-27",
+      "status": "cutoff"
     },
     {
       "appId": 7,
@@ -277314,7 +277482,7 @@
       "earliestDate": "2025-01-10",
       "backfillOldestSeen": "2024-02-28",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
+      "lastSuccess": "2026-11-27",
       "status": "cutoff"
     },
     {
@@ -277324,17 +277492,9 @@
       "earliestDate": "2025-05-13",
       "backfillOldestSeen": "2022-02-07",
       "backfillEnd": "cutoff",
-      "lastSuccess": "2026-11-26",
-      "status": "failed"
+      "lastSuccess": "2026-11-27",
+      "status": "cutoff"
     }
   ],
-  "errors": [
-    "GS홈쇼핑 iOS",
-    "CJ온스타일 iOS",
-    "현대홈쇼핑 iOS",
-    "롯데홈쇼핑 iOS",
-    "홈앤쇼핑 iOS",
-    "NS홈쇼핑 iOS",
-    "공영홈쇼핑 iOS"
-  ]
+  "errors": []
 }
