@@ -1,7 +1,7 @@
 {
-  "updatedAt": "2026-11-27 14:55:18 KST",
+  "updatedAt": "2026-11-27 18:58:37 KST",
   "startDate": "2025-01-01",
-  "totalCount": 23101,
+  "totalCount": 23105,
   "apps": [
     {
       "id": 1,
@@ -16,9 +16,9 @@
       "storeListings": {
         "Android": {
           "title": "GS SHOP",
-          "rating": 4.790412,
+          "rating": 4.7903185,
           "minDownloads": 10000000,
-          "ratingCount": 597639,
+          "ratingCount": 597675,
           "updatedOn": "2026-11-23"
         },
         "iOS": {
@@ -44,9 +44,9 @@
       "storeListings": {
         "Android": {
           "title": "CJ온스타일",
-          "rating": 4.798859,
+          "rating": 4.7987366,
           "minDownloads": 10000000,
-          "ratingCount": 340780,
+          "ratingCount": 340784,
           "updatedOn": "2026-11-26"
         },
         "iOS": {
@@ -72,9 +72,9 @@
       "storeListings": {
         "Android": {
           "title": "현대홈쇼핑",
-          "rating": 4.681236,
+          "rating": 4.6813593,
           "minDownloads": 10000000,
-          "ratingCount": 99469,
+          "ratingCount": 99483,
           "updatedOn": "2026-10-26"
         },
         "iOS": {
@@ -100,9 +100,9 @@
       "storeListings": {
         "Android": {
           "title": "롯데홈쇼핑",
-          "rating": 4.7441545,
+          "rating": 4.7441955,
           "minDownloads": 10000000,
-          "ratingCount": 257346,
+          "ratingCount": 257348,
           "updatedOn": "2026-09-29"
         },
         "iOS": {
@@ -130,7 +130,7 @@
           "title": "홈앤쇼핑 - 깐깐함이 찾은 정답, 홈앤쇼핑",
           "rating": 4.461413,
           "minDownloads": 10000000,
-          "ratingCount": 95770,
+          "ratingCount": 95766,
           "updatedOn": "2026-11-18"
         },
         "iOS": {
@@ -156,9 +156,9 @@
       "storeListings": {
         "Android": {
           "title": "NS홈쇼핑",
-          "rating": 4.757119,
+          "rating": 4.7571683,
           "minDownloads": 10000000,
-          "ratingCount": 285671,
+          "ratingCount": 285689,
           "updatedOn": "2026-11-16"
         },
         "iOS": {
@@ -201,6 +201,18 @@
     }
   ],
   "reviews": [
+    {
+      "id": 279508166928281,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "ᆞ전ᆞ윤숙",
+      "date": "2026-11-26",
+      "version": "9.3.51",
+      "content": "아직안써봤지만 엄청 좋을것같네요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
     {
       "id": 273322865253471,
       "appId": 4,
@@ -298,6 +310,18 @@
       "teamStatus": "미확인"
     },
     {
+      "id": 86177892183706,
+      "appId": 3,
+      "os": "Android",
+      "rating": 5,
+      "author": "박박대원",
+      "date": "2026-11-26",
+      "version": "7.1.7",
+      "content": "사용 해보신 분은 알검니다 역시 쿡셀 이 좋다는것을.......",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
       "id": 69277146048590,
       "appId": 1,
       "os": "Android",
@@ -318,6 +342,30 @@
       "date": "2026-11-26",
       "version": "3.9.13",
       "content": "최악의 어플.. 무슨 검색어 하나 나오는대 시간이 이렇게 오래 걸리나요",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 27113905433107,
+      "appId": 1,
+      "os": "Android",
+      "rating": 5,
+      "author": "이범숙",
+      "date": "2026-11-26",
+      "version": "9.3.51",
+      "content": "스텐품질이 좋을것같아구매합니다",
+      "devReply": "",
+      "teamStatus": "미확인"
+    },
+    {
+      "id": 24684973209117,
+      "appId": 6,
+      "os": "Android",
+      "rating": 3,
+      "author": "천민선",
+      "date": "2026-11-26",
+      "version": "5.10.2",
+      "content": "자세한 방송 감사합니다",
       "devReply": "",
       "teamStatus": "미확인"
     },
@@ -277418,7 +277466,7 @@
     {
       "appId": 1,
       "os": "Android",
-      "count": 10195,
+      "count": 10197,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
@@ -277458,7 +277506,7 @@
     {
       "appId": 3,
       "os": "Android",
-      "count": 3322,
+      "count": 3323,
       "earliestDate": "2025-01-04",
       "backfillOldestSeen": "2024-10-27",
       "backfillEnd": "cutoff",
@@ -277518,7 +277566,7 @@
     {
       "appId": 6,
       "os": "Android",
-      "count": 3239,
+      "count": 3240,
       "earliestDate": "2025-01-01",
       "backfillOldestSeen": "2024-12-02",
       "backfillEnd": "cutoff",
@@ -277533,7 +277581,7 @@
       "backfillOldestSeen": "2024-12-30",
       "backfillEnd": "cutoff",
       "lastSuccess": "2026-11-27",
-      "status": "failed"
+      "status": "cutoff"
     },
     {
       "appId": 7,
@@ -277562,7 +277610,6 @@
     "현대홈쇼핑 iOS",
     "롯데홈쇼핑 iOS",
     "홈앤쇼핑 iOS",
-    "NS홈쇼핑 iOS",
     "공영홈쇼핑 iOS"
   ]
 }
